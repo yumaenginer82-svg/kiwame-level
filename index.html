@@ -31,9 +31,18 @@ img{max-width:100%}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Old+Mincho:wght@400;600;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
 /* ============================================================
-   加州清光 — 表地は黒、裏地は紅。
+   加州清光 — 黒・白・紅の三色だけで組む。
    既定は「表地の黒」。表示切替で「裏地の紅」（白地）へ。
-   紅＝極・強調 ／ 鈍銀＝初・特 ／ 山吹＝注意（アクセントとは別系統）
+
+   黒  = ground / surface / line / habaki      … 地と枠
+   白  = ink / ink-2 / muted / steel / on-accent … 文字と刃
+   紅  = kurenai* / lv-* / saya                 … 差し色
+
+   紅を文字に使ってよいのは次の4つだけ。ほかは必ず白系にする。
+     1. 題字の家紋「極」   2. 結果の落款「極」
+     3. 答えの「極 Lv◯◯」  4. 固定バーの同じ答え
+   それ以外で紅が出るのは、罫線・枠の隅・印の縁・鞘・だんだら・地紋といった
+   「文字ではない」要素に限る。注意喚起も色ではなく囲みの形で示す。
    ============================================================ */
 :root{
   --ground:#0a0708;
@@ -46,18 +55,15 @@ img{max-width:100%}
   --ink-2:#d8c9ca;
   --muted:#9b898c;
   --kurenai:#d8324b;
-  --kurenai-2:#f2647a;
   --kurenai-dim:#7d2131;
   --kurenai-text:#f2647a;
   --kurenai-soft:#2a0f14;
+  --chip-fill:#bf2941;
   --lv-a:#ff8f9d;
   --lv-b:#f0576b;
   --lv-c:#d13a50;
   --habaki:#2b2226;
-  --sub:#9aa2a8;
-  --sub-soft:#191c1e;
-  --caution:#c9922f;
-  --caution-soft:#241a0c;
+  --on-accent:#fdfbfb;
   --steel-a:#e9e5e5;
   --steel-b:#b3aaac;
   --saya-a:#6e1b2a;
@@ -79,10 +85,11 @@ img{max-width:100%}
     --ink-2:#42322f;
     --muted:#6f5e60;
     --kurenai:#b41f38;
-    --kurenai-2:#8e1428;
     --kurenai-dim:#cf98a2;
     --kurenai-text:#8e1428;
     --kurenai-soft:#f7e2e4;
+  --chip-fill:#b41f38;
+    --chip-fill:#b41f38;
   --lv-a:#8e1428;
   --lv-b:#b41f38;
   --lv-c:#c94257;
@@ -91,10 +98,7 @@ img{max-width:100%}
     --lv-b:#b41f38;
     --lv-c:#c94257;
     --habaki:#5b4a4d;
-    --sub:#57616a;
-    --sub-soft:#e5e9ec;
-    --caution:#8a6218;
-    --caution-soft:#f4ecda;
+    --on-accent:#fdfafa;
     --steel-a:#dcd6d6;
     --steel-b:#a79ea0;
     --saya-a:#a52639;
@@ -116,14 +120,10 @@ img{max-width:100%}
   --ink-2:#42322f;
   --muted:#6f5e60;
   --kurenai:#b41f38;
-  --kurenai-2:#8e1428;
   --kurenai-dim:#cf98a2;
   --kurenai-text:#8e1428;
   --kurenai-soft:#f7e2e4;
-  --sub:#57616a;
-  --sub-soft:#e5e9ec;
-  --caution:#8a6218;
-  --caution-soft:#f4ecda;
+  --on-accent:#fdfafa;
   --steel-a:#dcd6d6;
   --steel-b:#a79ea0;
   --saya-a:#a52639;
@@ -217,7 +217,7 @@ input::placeholder{color:var(--muted);opacity:.7}
 
 .combo{position:relative}
 .combo-input{padding-right:32px}
-.combo-caret{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--kurenai-dim);pointer-events:none;font-size:.6rem}
+.combo-caret{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:.6rem}
 .combo-list{
   position:absolute;z-index:30;top:calc(100% + 5px);left:0;right:0;max-height:min(58vh,320px);overflow-y:auto;
   -webkit-overflow-scrolling:touch;
@@ -230,7 +230,7 @@ input::placeholder{color:var(--muted);opacity:.7}
 }
 .combo-list .grp:first-child{border-top:0;margin-top:0;padding-top:6px}
 .combo-list li.opt{padding:9px 13px;cursor:pointer;display:flex;align-items:baseline;gap:8px;font-size:.9375rem}
-.combo-list li.opt[aria-selected=true]{color:var(--kurenai-text);font-weight:700}
+.combo-list li.opt[aria-selected=true]{color:var(--ink);font-weight:700;box-shadow:inset 3px 0 0 var(--kurenai)}
 .combo-list li.opt.active,.combo-list li.opt:hover{background:var(--kurenai-soft);color:var(--ink)}
 .combo-list li.opt .rr{margin-left:auto;font-size:.6875rem;color:var(--muted);letter-spacing:.06em;font-family:"Zen Old Mincho",serif;white-space:nowrap}
 .combo-list li.opt.active .rr,.combo-list li.opt:hover .rr{color:var(--ink-2)}
@@ -271,9 +271,9 @@ input::placeholder{color:var(--muted);opacity:.7}
 .subject .nm{font-family:"Zen Old Mincho",serif;font-size:1.4rem;font-weight:600;letter-spacing:.08em;color:var(--ink)}
 .chip{font-family:"Zen Old Mincho",serif;font-size:.6875rem;letter-spacing:.14em;padding:2px 9px;
   border:1px solid currentColor;color:var(--muted);white-space:nowrap;line-height:1.7}
-.chip.rank{color:var(--kurenai-text);border-color:var(--kurenai-dim);background:var(--kurenai-soft)}
-.chip.type{color:var(--sub);border-color:var(--sub);background:var(--sub-soft)}
-.chip.warn{color:var(--caution);border-color:var(--caution);background:var(--caution-soft)}
+.chip.rank{color:var(--on-accent);border-color:var(--chip-fill);background:var(--chip-fill)}
+.chip.type{color:var(--ink-2);border-color:var(--line);background:var(--surface-2)}
+.chip.warn{color:var(--muted);border-color:var(--muted);border-style:dashed;background:transparent}
 
 .lv-line{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:14px 0 2px}
 .lv-word{font-family:"Yuji Syuku",serif;font-size:1.5rem;color:var(--kurenai-text);letter-spacing:.2em}
@@ -307,7 +307,7 @@ input::placeholder{color:var(--muted);opacity:.7}
 @media (prefers-reduced-motion:reduce){.blade-fill{transition:none}}
 .blade-legend{display:flex;justify-content:space-between;gap:10px;margin-top:9px;
   font-family:"Zen Old Mincho",serif;font-size:.6875rem;letter-spacing:.06em}
-.blade-legend .l{color:var(--sub)}
+.blade-legend .l{color:var(--muted)}
 .blade-legend .r{color:var(--muted);text-align:right}
 
 /* 内訳 */
@@ -316,14 +316,14 @@ input::placeholder{color:var(--muted);opacity:.7}
 .calc .k{font-size:.8125rem;color:var(--muted)}
 .calc .k small{display:block;font-size:.6875rem;opacity:.85;letter-spacing:0}
 .calc .v{font-family:"Zen Old Mincho",serif;font-size:1.125rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
-.calc .v.minus{color:var(--sub)}
+.calc .v.minus{color:var(--muted)}
 .calc li.carry{background:var(--ground-2);margin:0 -12px;padding-left:12px;padding-right:12px;
   border-bottom-color:transparent;border-left:2px solid var(--kurenai)}
 .calc li.carry .v{color:var(--ink);font-weight:700}
 
-.notice{display:flex;gap:10px;align-items:flex-start;border-left:3px solid var(--caution);background:var(--caution-soft);
+.notice{display:flex;gap:10px;align-items:flex-start;border-left:3px solid var(--kurenai);background:var(--kurenai-soft);
   padding:12px 14px;margin-top:16px;font-size:.8125rem;color:var(--ink-2)}
-.notice.info{border-left-color:var(--sub);background:var(--sub-soft)}
+.notice.info{border-left-color:var(--line);background:var(--surface-2)}
 .notice b{color:var(--ink);font-weight:700}
 .notice p{margin:0}
 
