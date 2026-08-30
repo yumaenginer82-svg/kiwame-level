@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0708" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ebe4e4" media="(prefers-color-scheme: light)">
+<meta name="description" content="刀剣乱舞で、いまの累積経験値のまま修行に出したら極が何レベルで帰ってくるかを刀種別に計算します。">
+<meta name="apple-mobile-web-app-title" content="極早見盤">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="極レベル早見盤">
+<meta property="og:title" content="極レベル早見盤">
+<meta property="og:description" content="刀剣乱舞で、いまの累積経験値のまま修行に出したら極が何レベルで帰ってくるかを刀種別に計算します。">
+<meta property="og:url" content="https://yumaenginer82-svg.github.io/kiwame-level/">
+<meta property="og:image" content="https://yumaenginer82-svg.github.io/kiwame-level/icon-512.png">
+<meta name="twitter:card" content="summary">
+<style>
+:root{color-scheme:dark light}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>極レベル早見盤</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Old+Mincho:wght@400;600;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   加州清光 — 表地は黒、裏地は紅。
+   既定は「表地の黒」。表示切替で「裏地の紅」（白地）へ。
+   紅＝極・強調 ／ 鈍銀＝初・特 ／ 山吹＝注意（アクセントとは別系統）
+   ============================================================ */
+:root{
+  --ground:#0a0708;
+  --ground-2:#040203;
+  --surface:#150f11;
+  --surface-2:#1e1619;
+  --line:#3b2b2f;
+  --line-soft:#2a1e21;
+  --ink:#f2eceb;
+  --ink-2:#d8c9ca;
+  --muted:#9b898c;
+  --kurenai:#d8324b;
+  --kurenai-2:#f2647a;
+  --kurenai-dim:#7d2131;
+  --kurenai-text:#f2647a;
+  --kurenai-soft:#2a0f14;
+  --lv-end:#7d2131;
+  --habaki:#2b2226;
+  --sub:#9aa2a8;
+  --sub-soft:#191c1e;
+  --caution:#c9922f;
+  --caution-soft:#241a0c;
+  --steel-a:#e9e5e5;
+  --steel-b:#b3aaac;
+  --saya-a:#6e1b2a;
+  --saya-b:#3a0c16;
+  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(216,50,75,0.085)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
+  --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(255,255,255,0.78)' stroke-width='1.3'/%3E%3C/svg%3E");
+  --dandara:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='9' viewBox='0 0 28 9'%3E%3Cpath d='M0 9 L7 0 L14 9 Z M14 9 L21 0 L28 9 Z' fill='rgba(216,50,75,0.85)'/%3E%3C/svg%3E");
+  --shadow:0 2px 0 rgba(0,0,0,.5),0 18px 40px -24px rgba(0,0,0,.9);
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --ground:#ebe4e4;
+    --ground-2:#ded4d5;
+    --surface:#f8f4f3;
+    --surface-2:#efe7e7;
+    --line:#c9b9bb;
+    --line-soft:#dccfd0;
+    --ink:#16100f;
+    --ink-2:#42322f;
+    --muted:#6f5e60;
+    --kurenai:#b41f38;
+    --kurenai-2:#8e1428;
+    --kurenai-dim:#cf98a2;
+    --kurenai-text:#8e1428;
+    --kurenai-soft:#f7e2e4;
+  --lv-end:#c94257;
+  --habaki:#5b4a4d;
+    --lv-end:#c94257;
+    --habaki:#5b4a4d;
+    --sub:#57616a;
+    --sub-soft:#e5e9ec;
+    --caution:#8a6218;
+    --caution-soft:#f4ecda;
+    --steel-a:#dcd6d6;
+    --steel-b:#a79ea0;
+    --saya-a:#a52639;
+    --saya-b:#6d1424;
+    --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(150,25,45,0.11)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
+    --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(255,255,255,0.9)' stroke-width='1.3'/%3E%3C/svg%3E");
+    --dandara:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='9' viewBox='0 0 28 9'%3E%3Cpath d='M0 9 L7 0 L14 9 Z M14 9 L21 0 L28 9 Z' fill='rgba(180,31,56,0.8)'/%3E%3C/svg%3E");
+    --shadow:0 1px 0 rgba(120,90,95,.22),0 14px 32px -22px rgba(70,30,40,.5);
+  }
+}
+:root[data-theme="light"]{
+  --ground:#ebe4e4;
+  --ground-2:#ded4d5;
+  --surface:#f8f4f3;
+  --surface-2:#efe7e7;
+  --line:#c9b9bb;
+  --line-soft:#dccfd0;
+  --ink:#16100f;
+  --ink-2:#42322f;
+  --muted:#6f5e60;
+  --kurenai:#b41f38;
+  --kurenai-2:#8e1428;
+  --kurenai-dim:#cf98a2;
+  --kurenai-text:#8e1428;
+  --kurenai-soft:#f7e2e4;
+  --sub:#57616a;
+  --sub-soft:#e5e9ec;
+  --caution:#8a6218;
+  --caution-soft:#f4ecda;
+  --steel-a:#dcd6d6;
+  --steel-b:#a79ea0;
+  --saya-a:#a52639;
+  --saya-b:#6d1424;
+  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(150,25,45,0.11)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
+  --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(255,255,255,0.9)' stroke-width='1.3'/%3E%3C/svg%3E");
+  --dandara:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='9' viewBox='0 0 28 9'%3E%3Cpath d='M0 9 L7 0 L14 9 Z M14 9 L21 0 L28 9 Z' fill='rgba(180,31,56,0.8)'/%3E%3C/svg%3E");
+  --shadow:0 1px 0 rgba(120,90,95,.22),0 14px 32px -22px rgba(70,30,40,.5);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground) var(--pattern) repeat;
+  color:var(--ink);
+  font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic UI",system-ui,sans-serif;
+  font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:clamp(12px,3.5vw,40px) clamp(11px,3.5vw,30px) 52px}
+
+/* ---------- 黒地に紅の裏地 ---------- */
+.panel{position:relative;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
+  padding:clamp(15px,2.6vw,26px)}
+.panel::before{content:"";position:absolute;inset:4px;border:1px solid var(--kurenai-dim);opacity:.42;pointer-events:none}
+.framed::after{
+  content:"";position:absolute;inset:-1px;pointer-events:none;
+  background:
+    linear-gradient(var(--kurenai),var(--kurenai)) left 0 top 0/13px 2px no-repeat,
+    linear-gradient(var(--kurenai),var(--kurenai)) left 0 top 0/2px 13px no-repeat,
+    linear-gradient(var(--kurenai),var(--kurenai)) right 0 top 0/13px 2px no-repeat,
+    linear-gradient(var(--kurenai),var(--kurenai)) right 0 top 0/2px 13px no-repeat,
+    linear-gradient(var(--kurenai),var(--kurenai)) left 0 bottom 0/13px 2px no-repeat,
+    linear-gradient(var(--kurenai),var(--kurenai)) left 0 bottom 0/2px 13px no-repeat,
+    linear-gradient(var(--kurenai),var(--kurenai)) right 0 bottom 0/13px 2px no-repeat,
+    linear-gradient(var(--kurenai),var(--kurenai)) right 0 bottom 0/2px 13px no-repeat;
+}
+
+/* ---------- 題字 ---------- */
+.masthead{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
+  padding:clamp(14px,2.4vw,22px) clamp(14px,2.6vw,26px) calc(clamp(14px,2.4vw,22px) + 12px)}
+.masthead::before{content:"";position:absolute;inset:4px;border:1px solid var(--kurenai-dim);opacity:.42;pointer-events:none}
+.dandara{position:absolute;left:5px;right:5px;bottom:5px;height:9px;
+  background:var(--dandara) repeat-x;background-size:28px 9px;pointer-events:none}
+.brand{display:flex;align-items:center;gap:14px;position:relative;min-width:0}
+.mon{
+  width:50px;height:50px;flex:none;display:grid;place-items:center;position:relative;
+  color:var(--kurenai);font-family:"Yuji Syuku",serif;font-size:26px;line-height:1;
+  border:1px solid var(--kurenai);border-radius:50%;
+}
+.mon::after{content:"";position:absolute;inset:4px;border:1px solid var(--kurenai-dim);border-radius:50%}
+h1{font-family:"Yuji Syuku","Yu Mincho",serif;font-weight:400;font-size:clamp(1.4rem,6vw,2.15rem);
+  margin:0;letter-spacing:.14em;line-height:1.2;color:var(--ink);text-wrap:balance}
+.tagline{margin:4px 0 0;color:var(--muted);font-size:.75rem;letter-spacing:.04em;
+  font-family:"Zen Old Mincho",serif;line-height:1.6}
+.theme-btn{
+  position:relative;border:1px solid var(--kurenai-dim);background:var(--surface-2);color:var(--kurenai);
+  font-family:"Zen Old Mincho",serif;font-size:.8125rem;padding:9px 15px;min-height:40px;cursor:pointer;letter-spacing:.12em;
+}
+.theme-btn:hover{border-color:var(--kurenai);background:var(--ground-2)}
+
+/* ---------- 配置 ---------- */
+.cols{display:grid;grid-template-columns:minmax(0,352px) minmax(0,1fr);gap:clamp(13px,2.4vw,26px);
+  margin-top:clamp(13px,2.4vw,26px);align-items:start}
+@media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:clamp(13px,2.4vw,26px)}
+
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 15px}
+.eyebrow .num{
+  width:26px;height:26px;flex:none;display:grid;place-items:center;
+  border:1px solid var(--kurenai-dim);color:var(--kurenai);
+  font-family:"Yuji Syuku",serif;font-size:14px;line-height:1;padding-bottom:1px;
+}
+.eyebrow .ttl{font-family:"Zen Old Mincho",serif;font-size:.9375rem;letter-spacing:.24em;color:var(--ink-2)}
+.eyebrow .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+/* ---------- 入力 ---------- */
+.field{display:flex;flex-direction:column;gap:8px}
+.field + .field{margin-top:18px}
+label,.lbl{font-family:"Zen Old Mincho",serif;font-size:.875rem;color:var(--ink-2);letter-spacing:.1em}
+.hint{font-size:.75rem;color:var(--muted);line-height:1.7}
+.hint b{color:var(--ink-2);font-weight:700}
+
+input[type=text],select{
+  font:inherit;width:100%;padding:11px 12px;min-height:44px;
+  background:var(--surface-2);color:var(--ink);
+  border:1px solid var(--line);border-radius:0;
+}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--kurenai);outline-offset:1px}
+input::placeholder{color:var(--muted);opacity:.7}
+
+.combo{position:relative}
+.combo-input{padding-right:32px}
+.combo-caret{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--kurenai-dim);pointer-events:none;font-size:.6rem}
+.combo-list{
+  position:absolute;z-index:30;top:calc(100% + 5px);left:0;right:0;max-height:min(58vh,320px);overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:var(--surface);border:1px solid var(--kurenai-dim);box-shadow:var(--shadow);
+  list-style:none;margin:0;padding:4px 0;
+}
+.combo-list .grp{
+  font-family:"Zen Old Mincho",serif;font-size:.75rem;letter-spacing:.24em;color:var(--kurenai);
+  padding:10px 13px 5px;border-top:1px solid var(--line-soft);margin-top:4px;
+}
+.combo-list .grp:first-child{border-top:0;margin-top:0;padding-top:6px}
+.combo-list li.opt{padding:9px 13px;cursor:pointer;display:flex;align-items:baseline;gap:8px;font-size:.9375rem}
+.combo-list li.opt[aria-selected=true]{color:var(--kurenai);font-weight:700}
+.combo-list li.opt.active,.combo-list li.opt:hover{background:var(--kurenai-soft);color:var(--kurenai-text)}
+.combo-list li.opt .rr{margin-left:auto;font-size:.6875rem;color:var(--muted);letter-spacing:.06em;font-family:"Zen Old Mincho",serif;white-space:nowrap}
+.combo-list li.opt.active .rr,.combo-list li.opt:hover .rr{color:var(--kurenai)}
+.combo-empty{padding:15px 13px;color:var(--muted);font-size:.8125rem}
+
+.seg{display:flex;border:1px solid var(--line)}
+.seg button{
+  flex:1;font-family:"Zen Old Mincho",serif;font-size:.8125rem;letter-spacing:.12em;padding:11px 6px;min-height:44px;cursor:pointer;
+  background:var(--surface-2);color:var(--muted);border:0;border-right:1px solid var(--line);
+}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--ground-2);color:var(--kurenai);font-weight:600;box-shadow:inset 0 -2px 0 var(--kurenai)}
+
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.quick button{
+  font-family:"Zen Old Mincho",serif;font-size:.75rem;letter-spacing:.06em;padding:8px 11px;min-height:38px;cursor:pointer;
+  background:transparent;color:var(--muted);border:1px solid var(--line);
+}
+.quick button:hover{border-color:var(--kurenai);color:var(--kurenai)}
+
+.exp-input{font-family:"Zen Old Mincho",serif;font-size:1.35rem;font-variant-numeric:tabular-nums;letter-spacing:.04em;color:var(--kurenai-text)}
+
+/* ---------- 結果 ---------- */
+.result{position:relative;overflow:hidden}
+.rakkan{
+  position:absolute;z-index:2;top:20px;right:20px;width:74px;height:74px;
+  display:grid;place-items:center;transform:rotate(-5deg);
+  border:3px solid var(--kurenai);color:var(--kurenai);
+  font-family:"Yuji Syuku",serif;font-size:41px;line-height:1;padding-bottom:5px;
+}
+.rakkan::after{content:"";position:absolute;inset:3px;border:1px solid var(--kurenai);opacity:.5}
+@media (max-width:520px){.rakkan{width:54px;height:54px;font-size:30px;top:14px;right:14px;border-width:2px}}
+.result-body{position:relative;z-index:1}
+.has-seal .subject,.has-seal .lv-line{padding-right:94px}
+@media (max-width:520px){.has-seal .subject,.has-seal .lv-line{padding-right:62px}}
+
+.subject{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.subject .nm{font-family:"Zen Old Mincho",serif;font-size:1.4rem;font-weight:600;letter-spacing:.08em;color:var(--ink)}
+.chip{font-family:"Zen Old Mincho",serif;font-size:.6875rem;letter-spacing:.14em;padding:2px 9px;
+  border:1px solid currentColor;color:var(--muted);white-space:nowrap;line-height:1.7}
+.chip.rank{color:var(--kurenai);border-color:var(--kurenai-dim);background:var(--kurenai-soft)}
+.chip.type{color:var(--sub);border-color:var(--sub);background:var(--sub-soft)}
+.chip.warn{color:var(--caution);border-color:var(--caution);background:var(--caution-soft)}
+
+.lv-line{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:14px 0 2px}
+.lv-word{font-family:"Yuji Syuku",serif;font-size:1.5rem;color:var(--kurenai);letter-spacing:.2em}
+.lv-num{
+  font-family:"Zen Old Mincho",serif;font-weight:900;
+  font-size:clamp(3.6rem,15vw,6rem);line-height:.88;font-variant-numeric:tabular-nums;
+  background:linear-gradient(176deg,var(--kurenai-2) 4%,var(--kurenai) 52%,var(--lv-end) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.lv-num.small{font-size:clamp(1.4rem,5.6vw,2.1rem);font-weight:600;letter-spacing:.06em;line-height:1.35}
+.lv-delta{font-size:.8125rem;color:var(--muted);font-family:"Zen Old Mincho",serif}
+.lv-delta b{color:var(--ink-2);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* 抜刀メーター：紅の鞘から白銀の刃が出る */
+.blade{margin:22px 0 4px}
+.blade-row{display:flex;align-items:stretch;height:30px}
+.habaki{width:clamp(30px,9%,50px);flex:none;background:var(--habaki);
+  border:1px solid var(--kurenai-dim);border-right:0;position:relative}
+.habaki::after{content:"";position:absolute;inset:5px 4px;border-left:1px solid var(--kurenai);border-right:1px solid var(--kurenai);opacity:.55}
+.blade-track{
+  flex:1;min-width:0;position:relative;
+  background:linear-gradient(180deg,var(--saya-a),var(--saya-b) 60%,var(--saya-a));
+  border:1px solid var(--saya-b);
+  -webkit-clip-path:polygon(0 0,calc(100% - 26px) 0,100% 50%,calc(100% - 26px) 100%,0 100%);
+  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 50%,calc(100% - 26px) 100%,0 100%);
+}
+.blade-fill{position:absolute;inset:0;width:0;
+  background:var(--hamon) repeat-x left center/72px 100%,
+             linear-gradient(180deg,var(--steel-a),var(--steel-b) 58%,var(--steel-a));
+  transition:width .5s cubic-bezier(.22,.7,.3,1)}
+@media (prefers-reduced-motion:reduce){.blade-fill{transition:none}}
+.blade-legend{display:flex;justify-content:space-between;gap:10px;margin-top:9px;
+  font-family:"Zen Old Mincho",serif;font-size:.6875rem;letter-spacing:.06em}
+.blade-legend .l{color:var(--sub)}
+.blade-legend .r{color:var(--kurenai);text-align:right}
+
+/* 内訳 */
+.calc{list-style:none;margin:20px 0 0;padding:0;border-top:1px solid var(--line-soft)}
+.calc li{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+.calc .k{font-size:.8125rem;color:var(--muted)}
+.calc .k small{display:block;font-size:.6875rem;opacity:.85;letter-spacing:0}
+.calc .v{font-family:"Zen Old Mincho",serif;font-size:1.125rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+.calc .v.minus{color:var(--sub)}
+.calc li.carry{background:var(--ground-2);margin:0 -12px;padding-left:12px;padding-right:12px;
+  border-bottom-color:transparent;border-left:2px solid var(--kurenai)}
+.calc li.carry .v{color:var(--kurenai-text);font-weight:600}
+
+.notice{display:flex;gap:10px;align-items:flex-start;border-left:3px solid var(--caution);background:var(--caution-soft);
+  padding:12px 14px;margin-top:16px;font-size:.8125rem;color:var(--ink-2)}
+.notice.info{border-left-color:var(--sub);background:var(--sub-soft)}
+.notice b{color:var(--ink);font-weight:700}
+.notice p{margin:0}
+
+/* 目標表 */
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.875rem}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+th{font-family:"Zen Old Mincho",serif;font-size:.75rem;letter-spacing:.1em;color:var(--kurenai);font-weight:400;
+  border-bottom:1px solid var(--kurenai-dim)}
+th:first-child,td:first-child{text-align:left}
+td{color:var(--ink-2)}
+td.lv{font-family:"Zen Old Mincho",serif;font-size:1rem;color:var(--ink)}
+tr.reached td{color:var(--muted)}
+tr.reached td.lv{color:var(--kurenai)}
+tr.reached td.lv::after{content:"　到達済";font-family:"Zen Kaku Gothic New",sans-serif;font-size:.625rem;letter-spacing:.06em}
+tr.next{background:var(--ground-2)}
+tr.next td{color:var(--ink)}
+tr.next td.lv{font-weight:900;color:var(--kurenai-text)}
+.th-long{display:inline}
+.th-short{display:none}
+
+/* しくみ */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:16px;margin:0;list-style:none;padding:0}
+.steps li{border-top:1px solid var(--kurenai-dim);padding-top:12px}
+.steps .st{font-family:"Yuji Syuku",serif;color:var(--kurenai);font-size:1rem;letter-spacing:.2em;display:block;margin-bottom:5px}
+.steps p{margin:0;font-size:.8125rem;color:var(--muted);line-height:1.75}
+
+footer{margin-top:28px;padding-top:18px;border-top:1px solid var(--line);font-size:.75rem;color:var(--muted);line-height:1.9}
+footer a{color:var(--kurenai)}
+footer ul{margin:6px 0 0;padding-left:1.15em}
+footer li{margin-bottom:2px}
+
+/* ---------- 携帯 ---------- */
+@media (max-width:560px){
+  body{font-size:14px}
+  .brand{gap:11px}
+  .mon{width:42px;height:42px;font-size:22px}
+  .tagline{font-size:.6875rem}
+  .theme-btn{padding:8px 12px;font-size:.75rem}
+  .eyebrow{margin-bottom:13px}
+  .field + .field{margin-top:15px}
+  .subject .nm{font-size:1.25rem}
+  .lv-line{gap:10px;margin-top:10px}
+  .lv-word{font-size:1.25rem}
+  .blade{margin-top:18px}
+  .blade-legend{font-size:.625rem}
+  .calc li{padding:9px 0}
+  .calc .v{font-size:1.0625rem}
+  .calc li.carry{margin:0 -10px;padding-left:10px;padding-right:10px}
+  table{font-size:.8125rem}
+  th,td{padding:7px 6px}
+  td.lv{font-size:.9375rem}
+  tr.reached td.lv::after{content:"　済"}
+  .th-long{display:none}
+  .th-short{display:inline}
+  .steps{gap:14px}
+  footer{font-size:.6875rem;line-height:1.8}
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead framed">
+    <div class="brand">
+      <div class="mon" aria-hidden="true">極</div>
+      <div>
+        <h1>極レベル早見盤</h1>
+        <p class="tagline">いまの累積経験値で修行に出したら、極は何レベルで帰ってくるか</p>
+      </div>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">表示切替</button>
+    <div class="dandara" aria-hidden="true"></div>
+  </header>
+
+  <div class="cols">
+    <!-- ============ 入力 ============ -->
+    <section class="panel">
+      <p class="eyebrow"><span class="num" aria-hidden="true">壱</span><span class="ttl">送り出す</span><span class="rule" aria-hidden="true"></span></p>
+
+      <div class="field">
+        <label for="swordInput">刀剣男士</label>
+        <div class="combo">
+          <input id="swordInput" class="combo-input" type="text" role="combobox" autocomplete="off"
+                 aria-expanded="false" aria-controls="swordList" aria-autocomplete="list"
+                 placeholder="名前で検索（例：加州清光）">
+          <span class="combo-caret" aria-hidden="true">▼</span>
+          <ul id="swordList" class="combo-list" role="listbox" aria-label="刀剣男士" hidden></ul>
+        </div>
+        <p class="hint">刀種と極後のレア度から、極の経験値テーブルを自動で選びます。</p>
+      </div>
+
+      <div class="field">
+        <span class="lbl" id="modeLabel">入力のしかた</span>
+        <div class="seg" role="group" aria-labelledby="modeLabel">
+          <button type="button" id="modeExp" aria-pressed="true">累積経験値</button>
+          <button type="button" id="modeLv" aria-pressed="false">現在のレベル</button>
+        </div>
+      </div>
+
+      <div class="field" id="expField">
+        <label for="expInput">修行に出すときの累積経験値</label>
+        <input id="expInput" class="exp-input" type="text" inputmode="numeric" autocomplete="off" placeholder="1,927,800">
+        <div class="quick" id="quickExp"></div>
+        <p class="hint">刀帳の「累積経験値」の数字。Lv99でカンストした後も内部では貯まり続けます。</p>
+      </div>
+
+      <div class="field" id="lvField" hidden>
+        <label for="lvSelect">現在のレベル（初・特）</label>
+        <select id="lvSelect"></select>
+        <p class="hint">そのレベルに上がった<b>直後</b>＝最低値で計算します。実際はもう少し多いことがほとんどです。</p>
+      </div>
+    </section>
+
+    <!-- ============ 結果 ============ -->
+    <div class="stack">
+      <section class="panel result framed" id="resultPanel">
+        <div class="result-body">
+          <p class="eyebrow"><span class="num" aria-hidden="true">弐</span><span class="ttl">帰り着く</span><span class="rule" aria-hidden="true"></span></p>
+          <div id="resultArea" aria-live="polite">
+            <p class="hint">左で刀剣男士を選んでください。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="milestonePanel" hidden>
+        <p class="eyebrow"><span class="num" aria-hidden="true">参</span><span class="ttl">狙いを定める</span><span class="rule" aria-hidden="true"></span></p>
+        <p class="hint" id="milestoneLead"></p>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th>帰還時の極Lv</th><th><span class="th-long">修行前に必要な累積経験値</span><span class="th-short">必要な累積</span></th><th><span class="th-long">いまから足りない分</span><span class="th-short">不足分</span></th></tr>
+            </thead>
+            <tbody id="milestoneBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow"><span class="num" aria-hidden="true">解</span><span class="ttl">しくみ</span><span class="rule" aria-hidden="true"></span></p>
+        <ul class="steps">
+          <li>
+            <span class="st">差し引く</span>
+            <p>修行に出すと、累積経験値から「無印Lv1〜その刀種の修行可能Lv」までの分が引かれます。刀種ごとに固定額です。</p>
+          </li>
+          <li>
+            <span class="st">読み直す</span>
+            <p>残った経験値を極の経験値テーブルで読み直したものが帰還時のレベル。極はLv34まで全刀種共通、Lv35〜100で刀種ごとに変わります。</p>
+          </li>
+          <li>
+            <span class="st">貯めておく</span>
+            <p>Lv99でカンストした後の経験値も無駄になりません。そのまま極へ持ち越されるので、高いレベルで帰したいならLv99のまま育て続けます。</p>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <footer>
+    <p>経験値テーブル・刀剣男士データの出典（2026年8月30日取得）。刀剣乱舞ONLINEは株式会社DMM GAMES／株式会社ニトロプラスの作品です。本ページは非公式のファンツールで、公式とは関係ありません。</p>
+    <ul>
+      <li><a href="https://wikiwiki.jp/toulove/%E7%B5%8C%E9%A8%93%E5%80%A4" target="_blank" rel="noopener">刀剣乱舞ONLINE Wiki* — 経験値</a></li>
+      <li><a href="https://wikiwiki.jp/toulove/%E5%88%80%E5%89%A3%E7%94%B7%E5%A3%AB%E4%B8%80%E8%A6%A7" target="_blank" rel="noopener">刀剣乱舞ONLINE Wiki* — 刀剣男士一覧</a> ／ <a href="https://wikiwiki.jp/toulove/%E5%88%80%E5%89%A3%E7%94%B7%E5%A3%AB%20%E6%A5%B5" target="_blank" rel="noopener">刀剣男士 極</a></li>
+      <li><a href="https://gametohkenranbu.com/article/190394253.html" target="_blank" rel="noopener">刀剣乱舞速報 — 極のレベルと必要経験値</a>（照合用）</li>
+    </ul>
+    <p>剣（レア5・白山吉光）のテーブルは有志報告をもとに埋められている途中のため、値がずれることがあります。七星剣・丙子椒林剣は極が未実装でテーブル不明です。</p>
+  </footer>
+</div>
+
+<script>const DATA={"hatsu":[0,100,300,700,1300,2100,3100,4300,5700,7300,9100,11100,13300,15700,18300,21100,24100,27300,30700,34300,38200,42400,46900,51700,56800,62200,67900,73900,80200,86800,93700,100900,108400,116200,124300,132700,141400,150400,159700,169300,179300,189700,200500,211700,223300,235300,247700,260500,273700,287300,301300,315700,330500,345700,361300,377300,393700,410500,427700,445300,463400,482000,501100,520700,540800,561400,582500,604100,626200,648800,672000,695800,720200,745200,770800,797000,823800,851200,879200,907800,937200,967400,998400,1030200,1062800,1096200,1130400,1165400,1201200,1237800,1277800,1327800,1387800,1457800,1537800,1627800,1727800,1827800,1927800],"tables":{"tanto":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,1610345,2027560,2490600,2996735,3543235,4127370,4746410,5397625,6078285,6785660,7517020,8269635,9040775,9827710,10627710,11429400,12233306,13039953,13849865,14663567,15481584,16304441,17132662,17966772,18807296,19654759,20509686,21372601,22244029,23124495,24014524,24914640,25825368,26747233,27680760,28626474,29584899,30556560,31541982,32541690,33556208,34586062,35631776,36693875,37772883,38869326,39983728,41116614,42268509,43439937,44631423,45843492,47076669,48331479,49608446,50908096,52230953,53577541,54948386,56344012,57764944,59211707,60684826,62184826,63712232,64612232,65512405,66412789,67313421,68214340,69115584,70017191,70919199,71821645,72724568,73628006,74531997,75436579,76341790,77247667,78154249,79061574,79969680,80878605,81788386,82699062,83610671,84523251,85436840,86351475,87267195,88184038,89102042,90021245,90941684,91863398,92786425,93710803,94636570,95563763,96492421,97422582,98354284,99287565,100222463,101159015,102097260,103037236,103978981,104922533,105867929,106815208,107764408,108715567,109668723,110623913,111581176,112540550,113502073,114465783,115431717,116399914,117370412,118343249,119318463,120296091,121276172,122258744,123243845,124231513,125221786,126214701,127210297,128208612,129209684,130213551,131220250,132229820,133242299,134257725,135276136,136297569,137322063,138349656,139380386,140414291,141451408,142491776,143535433,144582417,145632766,146686517,147743709,148804380,149868568,150936311,152007647,153082613,154161248,155243590,156329677,157419547,158513237,159610786],"waki":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,1771379,2230316,2739660,3296408,3897558,4540107,5221051,5937387,6686113,7464226,8268722,9096598,9944852,10810481,11690481,12572340,13456636,14343948,15234851,16129923,17029742,17934885,18845928,19763449,20688025,21620235,22560654,23509861,24468432,25436944,26415976,27406104,28407904,29421956,30448836,31489121,32543389,33612216,34696180,35795859,36911829,38044668,39194953,40363262,41550171,42756258,43982101,45228275,46495360,47783930,49094565,50427841,51784336,53164627,54569290,55998905,57454048,58935295,60443224,61978413,63541438,65132878,66753308,68403309,70083457,70983457,71883630,72784014,73684646,74585565,75486809,76388416,77290424,78192870,79095793,79999231,80903222,81807804,82713015,83618892,84525474,85432799,86340905,87249830,88159611,89070287,89981896,90894476,91808065,92722700,93638420,94555263,95473267,96392470,97312909,98234623,99157650,100082028,101007795,101934988,102863646,103793807,104725509,105658790,106593688,107530240,108468485,109408461,110350206,111293758,112239154,113186433,114135633,115086792,116039948,116995138,117952401,118911775,119873298,120837008,121802942,122771139,123741637,124714474,125689688,126667316,127647397,128629969,129615070,130602738,131593011,132585926,133581522,134579837,135580909,136584776,137591475,138601045,139613524,140628950,141647361,142668794,143693288,144720881,145751611,146785516,147822633,148863001,149906658,150953642,152003991,153057742,154114934,155175605,156239793,157307536,158378872,159453838,160532473,161614815,162700902,163790772,164884462,165982011],"uchi3":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,1932413,2433071,2988719,3596081,4251881,4952843,5695691,6477149,7293941,8142791,9020423,9923561,10848929,11793251,12753251,13715279,14679967,15647943,16619837,17596280,18577900,19565329,20559194,21560126,22568755,23585710,24611623,25647121,26692834,27749393,28817428,29897567,30990441,32096679,33216911,34351768,35501878,36667871,37850378,39050027,40267449,41503274,42758131,44032649,45327459,46643191,47980473,49339936,50722210,52127924,53557707,55012190,56492002,57997774,59530135,61089715,62677143,64293049,65938063,67612814,69317932,71054048,72821791,74621791,76454678,77354678,78254851,79155235,80055867,80956786,81858030,82759637,83661645,84564091,85467014,86370452,87274443,88179025,89084236,89990113,90896695,91804020,92712126,93621051,94530832,95441508,96353117,97265697,98179286,99093921,100009641,100926484,101844488,102763691,103684130,104605844,105528871,106453249,107379016,108306209,109234867,110165028,111096730,112030011,112964909,113901461,114839706,115779682,116721427,117664979,118610375,119557654,120506854,121458013,122411169,123366359,124323622,125282996,126244519,127208229,128174163,129142360,130112858,131085695,132060909,133038537,134018618,135001190,135986291,136973959,137964232,138957147,139952743,140951058,141952130,142955997,143962696,144972266,145984745,147000171,148018582,149040015,150064509,151092102,152122832,153156737,154193854,155234222,156277879,157324863,158375212,159428963,160486155,161546826,162611014,163678757,164750093,165825059,166903694,167986036,169072123,170161993,171255683,172353232],"uchi4":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,2093448,2635828,3237780,3895755,4606205,5365581,6170333,7016912,7901770,8821358,9772126,10750525,11753007,12776023,13816023,14858220,15903297,16951938,18004824,19062637,20126059,21195773,22272460,23356803,24449484,25551186,26662591,27784381,28917237,30061843,31218881,32389032,33572978,34771402,35984988,37214416,38460368,39723528,41004576,42304197,43623070,44961880,46321308,47702037,49104748,50530123,51978846,53451598,54949061,56471918,58020850,59596539,61199669,62830922,64490979,66180524,67900239,69650803,71432901,73247215,75094427,76975219,78890273,80840274,82825903,83725903,84626076,85526460,86427092,87328011,88229255,89130862,90032870,90935316,91838239,92741677,93645668,94550250,95455461,96361338,97267920,98175245,99083351,99992276,100902057,101812733,102724342,103636922,104550511,105465146,106380866,107297709,108215713,109134916,110055355,110977069,111900096,112824474,113750241,114677434,115606092,116536253,117467955,118401236,119336134,120272686,121210931,122150907,123092652,124036204,124981600,125928879,126878079,127829238,128782394,129737584,130694847,131654221,132615744,133579454,134545388,135513585,136484083,137456920,138432134,139409762,140389843,141372415,142357516,143345184,144335457,145328372,146323968,147322283,148323355,149327222,150333921,151343491,152355970,153371396,154389807,155411240,156435734,157463327,158494057,159527962,160565079,161605447,162649104,163696088,164746437,165800188,166857380,167918051,168982239,170049982,171121318,172196284,173274919,174357261,175443348,176533218,177626908,178724457],"tachi":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,1627025,2215448,2868500,3582332,4353093,5176933,6050001,6968447,7928422,8926074,9957554,11019011,12106595,13216455,14344742,15475412,16609208,17746869,18889136,20036747,21190444,22350968,23519056,24695450,25880890,27076117,28281870,29498890,30727916,31969688,33224948,34494434,35778887,37079047,38395655,39729451,41081174,42451564,43841362,45251309,46682143,48134606,49609438,51107378,52629166,54175544,55747250,57345025,58969610,60621743,62302166,64011618,65750839,67520571,69321552,71154525,73020227,74919399,76852782,78821115,80825138,82865592,84943218,87058756,89212946,90112946,91013119,91913503,92814135,93715054,94616298,95517905,96419913,97322359,98225282,99128720,100032711,100937293,101842504,102748381,103654963,104562288,105470394,106379319,107289100,108199776,109111385,110023965,110937554,111852189,112767909,113684752,114602756,115521959,116442398,117364112,118287139,119211517,120137284,121064477,121993135,122923296,123854998,124788279,125723177,126659729,127597974,128537950,129479695,130423247,131368643,132315922,133265122,134216281,135169437,136124627,137081890,138041264,139002787,139966497,140932431,141900628,142871126,143843963,144819177,145796805,146776886,147759458,148744559,149732227,150722500,151715415,152711011,153709326,154710398,155714265,156720964,157730534,158743013,159758439,160776850,161798283,162822777,163850370,164881100,165915005,166952122,167992490,169036147,170083131,171133480,172187231,173244423,174305094,175369282,176437025,177508361,178583327,179661962,180744304,181830391,182920261,184013951,185111500],"odachi":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,2415518,3041340,3735900,4495103,5314853,6191055,7119615,8096438,9117428,10178490,11275530,12404453,13561163,14741565,15941565,17144100,18349959,19559930,20774798,21995351,23222376,24456662,25698993,26950158,28210944,29482139,30764529,32058902,33366044,34686743,36021786,37371960,38738052,40120850,41521140,42939711,44377349,45834840,47312973,48812535,50334312,51879093,53447664,55040813,56659325,58303989,59975592,61674921,63402764,65159906,66947135,68765238,70615004,72497219,74412669,76362144,78346430,80366312,82422579,84516018,86647416,88817561,91027239,93277239,95568348,96468348,97368521,98268905,99169537,100070456,100971700,101873307,102775315,103677761,104580684,105484122,106388113,107292695,108197906,109103783,110010365,110917690,111825796,112734721,113644502,114555178,115466787,116379367,117292956,118207591,119123311,120040154,120958158,121877361,122797800,123719514,124642541,125566919,126492686,127419879,128348537,129278698,130210400,131143681,132078579,133015131,133953376,134893352,135835097,136778649,137724045,138671324,139620524,140571683,141524839,142480029,143437292,144396666,145358189,146321899,147287833,148256030,149226528,150199365,151174579,152152207,153132288,154114860,155099961,156087629,157077902,158070817,159066413,160064728,161065800,162069667,163076366,164085936,165098415,166113841,167132252,168153685,169178179,170205772,171236502,172270407,173307524,174347892,175391549,176438533,177488882,178542633,179599825,180660496,181724684,182792427,183863763,184938729,186017364,187099706,188185793,189275663,190369353,191466902],"yari":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,1771379,2230316,2739660,3296408,3897558,4540107,5221051,5937387,6686113,7464226,8268722,9096598,9944852,10810481,11690481,12572340,13456636,14343948,15234851,16129923,17029742,17934885,18845928,19763449,20688025,21620235,22560654,23509861,24468432,25436944,26415976,27406104,28407904,29421956,30448836,31489121,32543389,33612216,34696180,35795859,36911829,38044668,39194953,40363262,41550171,42756258,43982101,45228275,46495360,47783930,49094565,50427841,51784336,53164627,54569290,55998905,57454048,58935295,60443224,61978413,63541438,65132878,66753308,68403309,70083457,70983457,71883630,72784014,73684646,74585565,75486809,76388416,77290424,78192870,79095793,79999231,80903222,81807804,82713015,83618892,84525474,85432799,86340905,87249830,88159611,89070287,89981896,90894476,91808065,92722700,93638420,94555263,95473267,96392470,97312909,98234623,99157650,100082028,101007795,101934988,102863646,103793807,104725509,105658790,106593688,107530240,108468485,109408461,110350206,111293758,112239154,113186433,114135633,115086792,116039948,116995138,117952401,118911775,119873298,120837008,121802942,122771139,123741637,124714474,125689688,126667316,127647397,128629969,129615070,130602738,131593011,132585926,133581522,134579837,135580909,136584776,137591475,138601045,139613524,140628950,141647361,142668794,143693288,144720881,145751611,146785516,147822633,148863001,149906658,150953642,152003991,153057742,154114934,155175605,156239793,157307536,158378872,159453838,160532473,161614815,162700902,163790772,164884462,165982011],"naginata":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,1771379,2230316,2739660,3296408,3897558,4540107,5221051,5937387,6686113,7464226,8268722,9096598,9944852,10810481,11690481,12572340,13456636,14343948,15234851,16129923,17029742,17934885,18845928,19763449,20688025,21620235,22560654,23509861,24468432,25436944,26415976,27406104,28407904,29421956,30448836,31489121,32543389,33612216,34696180,35795859,36911829,38044668,39194953,40363262,41550171,42756258,43982101,45228275,46495360,47783930,49094565,50427841,51784336,53164627,54569290,55998905,57454048,58935295,60443224,61978413,63541438,65132878,66753308,68403309,70083457,70983457,71883630,72784014,73684646,74585565,75486809,76388416,77290424,78192870,79095793,79999231,80903222,81807804,82713015,83618892,84525474,85432799,86340905,87249830,88159611,89070287,89981896,90894476,91808065,92722700,93638420,94555263,95473267,96392470,97312909,98234623,99157650,100082028,101007795,101934988,102863646,103793807,104725509,105658790,106593688,107530240,108468485,109408461,110350206,111293758,112239154,113186433,114135633,115086792,116039948,116995138,117952401,118911775,119873298,120837008,121802942,122771139,123741637,124714474,125689688,126667316,127647397,128629969,129615070,130602738,131593011,132585926,133581522,134579837,135580909,136584776,137591475,138601045,139613524,140628950,141647361,142668794,143693288,144720881,145751611,146785516,147822633,148863001,149906658,150953642,152003991,153057742,154114934,155175605,156239793,157307536,158378872,159453838,160532473,161614815,162700902,163790772,164884462,165982011],"ken":[0,588,1305,2194,3296,4653,6307,8300,10673,13468,16727,20491,24802,29702,35233,41436,48354,56027,64498,73808,84000,95114,107193,120278,134411,149634,165989,183517,202260,222260,307195,454335,660950,924310,1241685,2415518,3041340,3735900,4495103,5314853,6191055,7119615,8096438,9117428,10178490,11275530,12404453,13561163,14741565,15941565,17144100,18349959,19559930,20774798,21995351,23222376,24456662,25698993,26950158,28210944,29482139,30764529,32058902,33366044,34686743,36021786,37371960,38738052,40120850,41521140,42939711,44377349,45834840,47312973,48812535,50334312,51879093,53447664,55040813,56659325,58303989,59975592,61674921,63402764,65159906,66947135,68765238,70615004,72497219,74412669,76362144,78346430,80366312,82422579,84516018,86647416,88817561,91027239,93277239,95568348,96468348,97368521,98268905,99169537,100070456,100971700,101873307,102775315,103677761,104580684,105484122,106388113,107292695,108197906,109103783,110010365,110917690,111825796,112734721,113644502,114555178,115466787,116379367,117292956,118207591,119123311,120040154,120958158,121877361,122797800,123719514,124642541,125566919,126492686,127419879,128348537,129278698,130210400,131143681,132078579,133015131,133953376,134893352,135835097,136778649,137724045,138671324,139620524,140571683,141524839,142480029,143437292,144396666,145358189,146321899,147287833,148256030,149226528,150199365,151174579,152152207,153132288,154114860,155099961,156087629,157077902,158070817,159066413,160064728,161065800,162069667,163076366,164085936,165098415,166113841,167132252,168153685,169178179,170205772,171236502,172270407,173307524,174347892,175391549,176438533,177488882,178542633,179599825,180660496,181724684,182792427,183863763,184938729,186017364,187099706,188185793,189275663,190369353,191466902]},"train":{"短刀":{"lv":60,"exp":445300},"脇差":{"lv":65,"exp":540800},"打刀":{"lv":70,"exp":648800},"太刀":{"lv":75,"exp":770800},"大太刀":{"lv":80,"exp":907800},"槍":{"lv":65,"exp":540800},"薙刀":{"lv":65,"exp":540800},"剣":{"lv":80,"exp":907800}},"chars":[{"n":"童子切安綱 剥落","t":"太刀","r":6,"k":0,"x":"tachi","no":0},{"n":"三日月宗近","t":"太刀","r":6,"k":1,"x":"tachi","no":3},{"n":"小狐丸","t":"太刀","r":4,"k":1,"x":"tachi","no":5},{"n":"石切丸","t":"大太刀","r":4,"k":1,"x":"odachi","no":7},{"n":"岩融","t":"薙刀","r":4,"k":1,"x":"naginata","no":9},{"n":"今剣","t":"短刀","r":2,"k":1,"x":"tanto","no":11},{"n":"大典太光世","t":"太刀","r":6,"k":1,"x":"tachi","no":13},{"n":"ソハヤノツルキ","t":"太刀","r":4,"k":1,"x":"tachi","no":15},{"n":"数珠丸恒次","t":"太刀","r":6,"k":1,"x":"tachi","no":17},{"n":"にっかり青江","t":"脇差","r":3,"k":1,"x":"waki","no":19},{"n":"鬼丸国綱","t":"太刀","r":6,"k":1,"x":"tachi","no":21},{"n":"鳴狐","t":"打刀","r":3,"k":1,"x":"uchi3","no":23},{"n":"一期一振","t":"太刀","r":5,"k":1,"x":"tachi","no":25},{"n":"鯰尾藤四郎","t":"脇差","r":3,"k":1,"x":"waki","no":27},{"n":"骨喰藤四郎","t":"脇差","r":3,"k":1,"x":"waki","no":29},{"n":"平野藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":31},{"n":"厚藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":33},{"n":"後藤藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":35},{"n":"信濃藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":37},{"n":"前田藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":39},{"n":"秋田藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":41},{"n":"博多藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":43},{"n":"乱藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":45},{"n":"五虎退","t":"短刀","r":2,"k":1,"x":"tanto","no":47},{"n":"薬研藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":49},{"n":"包丁藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":51},{"n":"大包平","t":"太刀","r":6,"k":1,"x":"tachi","no":53},{"n":"鶯丸","t":"太刀","r":5,"k":1,"x":"tachi","no":55},{"n":"明石国行","t":"太刀","r":4,"k":1,"x":"tachi","no":57},{"n":"蛍丸","t":"大太刀","r":5,"k":1,"x":"odachi","no":59},{"n":"愛染国俊","t":"短刀","r":2,"k":1,"x":"tanto","no":61},{"n":"千子村正","t":"打刀","r":4,"k":1,"x":"uchi4","no":63},{"n":"蜻蛉切","t":"槍","r":4,"k":1,"x":"yari","no":65},{"n":"物吉貞宗","t":"脇差","r":3,"k":1,"x":"waki","no":67},{"n":"太鼓鐘貞宗","t":"短刀","r":2,"k":1,"x":"tanto","no":69},{"n":"亀甲貞宗","t":"打刀","r":3,"k":1,"x":"uchi3","no":71},{"n":"燭台切光忠","t":"太刀","r":4,"k":1,"x":"tachi","no":73},{"n":"大般若長光","t":"太刀","r":5,"k":1,"x":"tachi","no":75},{"n":"小竜景光","t":"太刀","r":5,"k":1,"x":"tachi","no":77},{"n":"江雪左文字","t":"太刀","r":5,"k":1,"x":"tachi","no":79},{"n":"宗三左文字","t":"打刀","r":3,"k":1,"x":"uchi3","no":81},{"n":"小夜左文字","t":"短刀","r":2,"k":1,"x":"tanto","no":83},{"n":"加州清光","t":"打刀","r":3,"k":1,"x":"uchi3","no":85},{"n":"大和守安定","t":"打刀","r":3,"k":1,"x":"uchi3","no":87},{"n":"歌仙兼定","t":"打刀","r":3,"k":1,"x":"uchi3","no":89},{"n":"和泉守兼定","t":"打刀","r":4,"k":1,"x":"uchi4","no":91},{"n":"陸奥守吉行","t":"打刀","r":3,"k":1,"x":"uchi3","no":93},{"n":"山姥切国広","t":"打刀","r":3,"k":1,"x":"uchi3","no":95},{"n":"山伏国広","t":"太刀","r":4,"k":1,"x":"tachi","no":97},{"n":"堀川国広","t":"脇差","r":3,"k":1,"x":"waki","no":99},{"n":"蜂須賀虎徹","t":"打刀","r":3,"k":1,"x":"uchi3","no":101},{"n":"浦島虎徹","t":"脇差","r":3,"k":1,"x":"waki","no":103},{"n":"長曽祢虎徹","t":"打刀","r":3,"k":1,"x":"uchi3","no":105},{"n":"髭切","t":"太刀","r":5,"k":1,"x":"tachi","no":107},{"n":"膝丸","t":"太刀","r":5,"k":1,"x":"tachi","no":112},{"n":"大倶利伽羅","t":"打刀","r":4,"k":1,"x":"uchi4","no":116},{"n":"へし切長谷部","t":"打刀","r":3,"k":1,"x":"uchi3","no":118},{"n":"不動行光","t":"短刀","r":2,"k":1,"x":"tanto","no":120},{"n":"獅子王","t":"太刀","r":4,"k":1,"x":"tachi","no":122},{"n":"小烏丸","t":"太刀","r":6,"k":1,"x":"tachi","no":124},{"n":"抜丸","t":"太刀","r":5,"k":0,"x":"tachi","no":126},{"n":"同田貫正国","t":"打刀","r":4,"k":1,"x":"uchi4","no":128},{"n":"鶴丸国永","t":"太刀","r":5,"k":1,"x":"tachi","no":130},{"n":"太郎太刀","t":"大太刀","r":4,"k":1,"x":"odachi","no":132},{"n":"次郎太刀","t":"大太刀","r":4,"k":1,"x":"odachi","no":134},{"n":"日本号","t":"槍","r":5,"k":1,"x":"yari","no":136},{"n":"御手杵","t":"槍","r":4,"k":1,"x":"yari","no":138},{"n":"巴形薙刀","t":"薙刀","r":4,"k":1,"x":"naginata","no":140},{"n":"毛利藤四郎","t":"短刀","r":2,"k":1,"x":"tanto","no":142},{"n":"篭手切江","t":"脇差","r":3,"k":1,"x":"waki","no":144},{"n":"謙信景光","t":"短刀","r":2,"k":1,"x":"tanto","no":146},{"n":"小豆長光","t":"太刀","r":4,"k":1,"x":"tachi","no":148},{"n":"日向正宗","t":"短刀","r":2,"k":1,"x":"tanto","no":150},{"n":"静形薙刀","t":"薙刀","r":4,"k":1,"x":"naginata","no":152},{"n":"南泉一文字","t":"打刀","r":3,"k":1,"x":"uchi3","no":154},{"n":"千代金丸","t":"太刀","r":4,"k":1,"x":"tachi","no":156},{"n":"山姥切長義","t":"打刀","r":3,"k":1,"x":"uchi3","no":158},{"n":"豊前江","t":"打刀","r":3,"k":1,"x":"uchi3","no":160},{"n":"祢々切丸","t":"大太刀","r":4,"k":1,"x":"odachi","no":162},{"n":"白山吉光","t":"剣","r":5,"k":1,"x":"ken","no":164},{"n":"南海太郎朝尊","t":"打刀","r":3,"k":1,"x":"uchi3","no":166},{"n":"肥前忠広","t":"脇差","r":3,"k":1,"x":"waki","no":168},{"n":"北谷菜切","t":"短刀","r":2,"k":1,"x":"tanto","no":170},{"n":"桑名江","t":"打刀","r":3,"k":1,"x":"uchi3","no":172},{"n":"水心子正秀","t":"打刀","r":3,"k":1,"x":"uchi3","no":174},{"n":"源清麿","t":"打刀","r":3,"k":1,"x":"uchi3","no":176},{"n":"松井江","t":"打刀","r":3,"k":1,"x":"uchi3","no":178},{"n":"山鳥毛","t":"太刀","r":6,"k":1,"x":"tachi","no":180},{"n":"古今伝授の太刀","t":"太刀","r":5,"k":0,"x":"tachi","no":182},{"n":"地蔵行平","t":"打刀","r":3,"k":0,"x":"uchi3","no":184},{"n":"治金丸","t":"脇差","r":3,"k":1,"x":"waki","no":186},{"n":"日光一文字","t":"太刀","r":5,"k":0,"x":"tachi","no":188},{"n":"太閤左文字","t":"短刀","r":2,"k":1,"x":"tanto","no":190},{"n":"五月雨江","t":"打刀","r":3,"k":0,"x":"uchi3","no":192},{"n":"大千鳥十文字槍","t":"槍","r":4,"k":0,"x":"yari","no":194},{"n":"泛塵","t":"脇差","r":3,"k":0,"x":"waki","no":196},{"n":"一文字則宗","t":"太刀","r":6,"k":0,"x":"tachi","no":198},{"n":"村雲江","t":"打刀","r":3,"k":0,"x":"uchi3","no":200},{"n":"姫鶴一文字","t":"太刀","r":5,"k":0,"x":"tachi","no":202},{"n":"福島光忠","t":"太刀","r":5,"k":0,"x":"tachi","no":204},{"n":"七星剣","t":"剣","r":6,"k":0,"x":null,"no":206},{"n":"丙子椒林剣","t":"剣","r":6,"k":0,"x":null,"no":208},{"n":"稲葉江","t":"打刀","r":4,"k":0,"x":"uchi4","no":210},{"n":"笹貫","t":"太刀","r":4,"k":0,"x":"tachi","no":212},{"n":"人間無骨","t":"槍","r":4,"k":0,"x":"yari","no":214},{"n":"八丁念仏","t":"太刀","r":4,"k":0,"x":"tachi","no":216},{"n":"石田正宗","t":"打刀","r":4,"k":0,"x":"uchi4","no":218},{"n":"実休光忠","t":"太刀","r":5,"k":0,"x":"tachi","no":220},{"n":"京極正宗","t":"短刀","r":2,"k":0,"x":"tanto","no":222},{"n":"孫六兼元","t":"打刀","r":4,"k":0,"x":"uchi4","no":224},{"n":"後家兼光","t":"打刀","r":3,"k":0,"x":"uchi3","no":226},{"n":"火車切","t":"脇差","r":3,"k":0,"x":"waki","no":228},{"n":"富田江","t":"打刀","r":4,"k":0,"x":"uchi4","no":230},{"n":"大慶直胤","t":"打刀","r":3,"k":0,"x":"uchi3","no":232},{"n":"九鬼正宗","t":"短刀","r":2,"k":0,"x":"tanto","no":234},{"n":"雲生","t":"太刀","r":4,"k":0,"x":"tachi","no":236},{"n":"道誉一文字","t":"太刀","r":6,"k":0,"x":"tachi","no":238},{"n":"雲次","t":"太刀","r":4,"k":0,"x":"tachi","no":240},{"n":"面影","t":"太刀","r":4,"k":0,"x":"tachi","no":242},{"n":"古備前信房","t":"太刀","r":5,"k":0,"x":"tachi","no":244},{"n":"倶利伽羅江","t":"短刀","r":2,"k":0,"x":"tanto","no":246},{"n":"三郎国宗","t":"太刀","r":5,"k":0,"x":"tachi","no":248},{"n":"安宅切","t":"打刀","r":3,"k":0,"x":"uchi3","no":250},{"n":"二筋樋貞宗","t":"打刀","r":3,"k":0,"x":"uchi3","no":252},{"n":"雲重","t":"打刀","r":3,"k":0,"x":"uchi3","no":254},{"n":"柏太刀","t":"大太刀","r":4,"k":0,"x":"odachi","no":256},{"n":"波平行安","t":"太刀","r":4,"k":0,"x":"tachi","no":258},{"n":"狐ヶ崎為次","t":"太刀","r":5,"k":0,"x":"tachi","no":260}]};</script>
+<script>
+(function(){
+  "use strict";
+  var TYPES = ["短刀","脇差","打刀","太刀","大太刀","槍","薙刀","剣"];
+  var fmt = function(n){ return n.toLocaleString("ja-JP"); };
+  var $ = function(id){ return document.getElementById(id); };
+  var STORE = "kiwame-level:v1";
+
+  /* ---------- 表示切替 ---------- */
+  $("themeBtn").addEventListener("click", function(){
+    var root = document.documentElement;
+    var cur = root.getAttribute("data-theme");
+    if(!cur){
+      cur = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    }
+    root.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+  });
+
+  /* ---------- 状態 ---------- */
+  var chars = DATA.chars.slice().sort(function(a,b){
+    var ai = TYPES.indexOf(a.t), bi = TYPES.indexOf(b.t);
+    if(ai !== bi) return ai - bi;
+    return a.no - b.no;
+  });
+  var selected = null;
+  var mode = "exp";
+  var expValue = 0;
+
+  /* ---------- 刀剣男士セレクト ---------- */
+  var input = $("swordInput"), list = $("swordList");
+  var activeIdx = -1, rendered = [];
+
+  function renderList(q){
+    q = (q || "").trim();
+    var items = q ? chars.filter(function(c){ return c.n.indexOf(q) >= 0 || c.t.indexOf(q) >= 0; }) : chars;
+    list.innerHTML = "";
+    rendered = [];
+    if(!items.length){
+      var e = document.createElement("li");
+      e.className = "combo-empty";
+      e.textContent = "該当する刀剣男士がいません";
+      list.appendChild(e);
+      return;
+    }
+    var lastType = null;
+    items.forEach(function(c){
+      if(c.t !== lastType){
+        lastType = c.t;
+        var g = document.createElement("li");
+        g.className = "grp";
+        g.setAttribute("role","presentation");
+        g.textContent = c.t;
+        list.appendChild(g);
+      }
+      var li = document.createElement("li");
+      li.className = "opt";
+      li.setAttribute("role","option");
+      li.setAttribute("aria-selected", selected && selected.n === c.n ? "true" : "false");
+      li.dataset.name = c.n;
+      var nm = document.createElement("span");
+      nm.textContent = c.n;
+      var rr = document.createElement("span");
+      rr.className = "rr";
+      rr.textContent = c.k ? ("極 レア" + c.r) : "極 未実装";
+      li.appendChild(nm); li.appendChild(rr);
+      li.addEventListener("mousedown", function(ev){ ev.preventDefault(); choose(c); });
+      list.appendChild(li);
+      rendered.push(li);
+    });
+  }
+  function openList(){ list.hidden = false; input.setAttribute("aria-expanded","true"); }
+  function closeList(){ list.hidden = true; input.setAttribute("aria-expanded","false"); setActive(-1); }
+  function setActive(i){
+    rendered.forEach(function(el){ el.classList.remove("active"); });
+    activeIdx = i;
+    if(i >= 0 && rendered[i]){
+      rendered[i].classList.add("active");
+      rendered[i].scrollIntoView({block:"nearest"});
+    }
+  }
+  function choose(c){ selected = c; input.value = c.n; closeList(); update(); }
+
+  input.addEventListener("focus", function(){ renderList(selected ? "" : input.value); openList(); });
+  input.addEventListener("input", function(){ renderList(input.value); openList(); setActive(-1); });
+  input.addEventListener("blur", function(){ setTimeout(closeList, 120); });
+  input.addEventListener("keydown", function(e){
+    if(e.key === "ArrowDown" || e.key === "ArrowUp"){
+      e.preventDefault();
+      if(list.hidden){ renderList(input.value); openList(); }
+      if(!rendered.length) return;
+      var i = activeIdx + (e.key === "ArrowDown" ? 1 : -1);
+      if(i < 0) i = rendered.length - 1;
+      if(i >= rendered.length) i = 0;
+      setActive(i);
+    } else if(e.key === "Enter"){
+      if(!list.hidden && activeIdx >= 0){
+        e.preventDefault();
+        var nm = rendered[activeIdx].dataset.name;
+        var c = chars.filter(function(x){ return x.n === nm; })[0];
+        if(c) choose(c);
+      }
+    } else if(e.key === "Escape"){
+      closeList();
+    }
+  });
+  renderList("");
+
+  /* ---------- 経験値入力 ---------- */
+  var expInput = $("expInput");
+  function digitsBefore(str, pos){
+    var n = 0;
+    for(var i = 0; i < pos; i++){ if(str.charCodeAt(i) >= 48 && str.charCodeAt(i) <= 57) n++; }
+    return n;
+  }
+  function posForDigits(str, n){
+    if(n <= 0) return 0;
+    var c = 0;
+    for(var i = 0; i < str.length; i++){
+      if(str.charCodeAt(i) >= 48 && str.charCodeAt(i) <= 57){ c++; if(c === n) return i + 1; }
+    }
+    return str.length;
+  }
+  expInput.addEventListener("input", function(){
+    var raw = expInput.value;
+    var caret = expInput.selectionStart || 0;
+    var dcount = digitsBefore(raw, caret);
+    var digits = raw.replace(/[^0-9]/g, "").replace(/^0+(?=\d)/, "");
+    if(digits.length > 12) digits = digits.slice(0, 12);
+    expValue = digits ? parseInt(digits, 10) : 0;
+    var out = digits ? expValue.toLocaleString("ja-JP") : "";
+    expInput.value = out;
+    var p = posForDigits(out, dcount);
+    try { expInput.setSelectionRange(p, p); } catch(err){}
+    update();
+  });
+
+  /* ---------- レベル選択 ---------- */
+  var lvSelect = $("lvSelect");
+  (function(){
+    var frag = document.createDocumentFragment();
+    for(var l = 1; l <= 99; l++){
+      var o = document.createElement("option");
+      o.value = String(l);
+      o.textContent = "Lv" + l + "（累積 " + fmt(DATA.hatsu[l-1]) + "）";
+      frag.appendChild(o);
+    }
+    lvSelect.appendChild(frag);
+    lvSelect.value = "99";
+  })();
+  lvSelect.addEventListener("change", update);
+
+  /* ---------- 入力モード ---------- */
+  function setMode(m){
+    mode = m;
+    $("modeExp").setAttribute("aria-pressed", m === "exp" ? "true" : "false");
+    $("modeLv").setAttribute("aria-pressed", m === "lv" ? "true" : "false");
+    $("expField").hidden = m !== "exp";
+    $("lvField").hidden = m !== "lv";
+    update();
+  }
+  $("modeExp").addEventListener("click", function(){ setMode("exp"); });
+  $("modeLv").addEventListener("click", function(){ setMode("lv"); });
+
+  /* ---------- 早入力 ---------- */
+  function buildQuick(){
+    var box = $("quickExp");
+    box.innerHTML = "";
+    var opts = [];
+    if(selected){
+      var tr = DATA.train[selected.t];
+      opts.push({ label: "修行可能Lv" + tr.lv + "丁度", v: tr.exp });
+    }
+    opts.push({ label: "Lv99丁度", v: DATA.hatsu[98] });
+    opts.push({ label: "消す", v: 0 });
+    opts.forEach(function(o){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = o.label;
+      b.addEventListener("click", function(){
+        expValue = o.v;
+        expInput.value = o.v ? fmt(o.v) : "";
+        update();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  /* ---------- 計算 ---------- */
+  function currentExp(){
+    if(mode === "lv") return DATA.hatsu[parseInt(lvSelect.value, 10) - 1];
+    return expValue;
+  }
+  function levelFor(table, remain){
+    var lo = 0, hi = table.length - 1, ans = 0;
+    while(lo <= hi){
+      var mid = (lo + hi) >> 1;
+      if(table[mid] <= remain){ ans = mid; lo = mid + 1; } else { hi = mid - 1; }
+    }
+    return ans + 1;
+  }
+  function tableLabel(c){
+    if(c.t === "打刀") return "打刀・極レア" + c.r;
+    if(c.t === "剣") return "剣・極レア5";
+    return c.t;
+  }
+
+  var MILESTONES = [40,50,60,70,80,90,99,100,120,150,199];
+
+  function save(){
+    try{
+      localStorage.setItem(STORE, JSON.stringify({
+        n: selected ? selected.n : null, m: mode, e: expValue, l: lvSelect.value
+      }));
+    }catch(err){}
+  }
+
+  function update(){
+    buildQuick();
+    save();
+    var area = $("resultArea");
+    var panel = $("resultPanel");
+    var mp = $("milestonePanel");
+
+    var old = panel.querySelector(".rakkan");
+    if(old) old.remove();
+    panel.classList.remove("has-seal");
+
+    if(!selected){
+      area.innerHTML = '<p class="hint">左で刀剣男士を選んでください。</p>';
+      mp.hidden = true;
+      return;
+    }
+
+    var c = selected;
+    var tr = DATA.train[c.t];
+    var cum = currentExp();
+    var table = c.x ? DATA.tables[c.x] : null;
+    var html = "";
+
+    html += '<div class="subject"><span class="nm">' + c.n + ' 極</span>' +
+            '<span class="chip type">' + c.t + '</span>' +
+            '<span class="chip ' + (c.k ? "rank" : "warn") + '">' + (c.k ? "極 レア" + c.r : "極 未実装") + '</span>' +
+            '</div>';
+
+    if(!table){
+      html += '<div class="notice"><p><b>この刀の極テーブルはまだ判明していません。</b>' +
+              c.n + ' は極が未実装で、レア' + c.r + 'の剣に必要な経験値が公開されていません。実装後に判明します。</p></div>';
+      area.innerHTML = html;
+      mp.hidden = true;
+      return;
+    }
+
+    var remain = cum - tr.exp;
+
+    if(remain < 0){
+      html += '<div class="lv-line"><span class="lv-num small">まだ修行に出せません</span></div>';
+      html += '<div class="notice"><p>' + c.t + 'が修行に出られるのは<b>Lv' + tr.lv + '（累積 ' + fmt(tr.exp) + '）</b>から。' +
+              'いまの累積 ' + fmt(cum) + ' だと、<b>あと ' + fmt(-remain) + '</b> 必要です。</p></div>';
+      area.innerHTML = html;
+      renderMilestones(c, tr, table, cum);
+      return;
+    }
+
+    var lv = levelFor(table, remain);
+    var capped = lv >= table.length;
+    var atLv = table[lv - 1];
+    var nextNeed = capped ? null : table[lv];
+    var into = remain - atLv;
+    var span = capped ? 0 : (nextNeed - atLv);
+    var pct = span > 0 ? Math.max(0, Math.min(100, into / span * 100)) : 100;
+
+    html += '<div class="lv-line">' +
+            '<span class="lv-word">極</span>' +
+            '<span class="lv-num">Lv' + lv + '</span>' +
+            (capped
+              ? '<span class="lv-delta">データ上の上限</span>'
+              : '<span class="lv-delta">次の Lv' + (lv + 1) + ' まであと <b>' + fmt(nextNeed - remain) + '</b></span>') +
+            '</div>';
+
+    html += '<div class="blade">' +
+            '<div class="blade-row">' +
+              '<div class="habaki" title="修行で差し引かれる分"></div>' +
+              '<div class="blade-track">' +
+                '<div class="blade-fill" style="width:' + pct.toFixed(1) + '%"></div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="blade-legend">' +
+              '<span class="l">鎺＝修行で消える ' + fmt(tr.exp) + '</span>' +
+              '<span class="r">' + (capped ? "カンスト" : "Lv" + lv + " → Lv" + (lv + 1) + " を " + Math.round(pct) + "%") + '</span>' +
+            '</div>' +
+            '</div>';
+
+    html += '<ul class="calc">' +
+            '<li><span class="k">修行に出すときの累積経験値</span><span class="v">' + fmt(cum) + '</span></li>' +
+            '<li><span class="k">修行で差し引かれる分<small>無印Lv1〜Lv' + tr.lv + '（' + c.t + 'の修行可能Lv）</small></span>' +
+              '<span class="v minus">− ' + fmt(tr.exp) + '</span></li>' +
+            '<li class="carry"><span class="k">極に持ち越される経験値</span><span class="v">' + fmt(remain) + '</span></li>' +
+            '<li><span class="k">極Lv' + lv + ' に必要な累積<small>極の経験値テーブル（' + tableLabel(c) + '）</small></span>' +
+              '<span class="v">' + fmt(atLv) + '</span></li>' +
+            '</ul>';
+
+    if(!c.k){
+      html += '<div class="notice info"><p>' + c.n + ' はまだ<b>極が未実装</b>です。上の値は同じ刀種・レア' + c.r + 'のテーブルで計算した見込みです。</p></div>';
+    }
+    if(c.t === "剣"){
+      html += '<div class="notice"><p>剣の極テーブルは<b>有志の報告で埋めている途中</b>のため、値が前後することがあります。</p></div>';
+    }
+
+    area.innerHTML = html;
+
+    var seal = document.createElement("div");
+    seal.className = "rakkan";
+    seal.setAttribute("aria-hidden", "true");
+    seal.textContent = "極";
+    panel.appendChild(seal);
+    panel.classList.add("has-seal");
+
+    renderMilestones(c, tr, table, cum);
+  }
+
+  function renderMilestones(c, tr, table, cum){
+    var mp = $("milestonePanel"), body = $("milestoneBody");
+    $("milestoneLead").textContent =
+      c.n + " を狙った極レベルで帰すために、修行に出す前までに貯めておく累積経験値です。";
+    body.innerHTML = "";
+    var firstUnreached = true;
+    MILESTONES.forEach(function(target){
+      if(target > table.length) return;
+      var need = table[target - 1] + tr.exp;
+      var short = need - cum;
+      var row = document.createElement("tr");
+      var reached = short <= 0;
+      if(reached){ row.className = "reached"; }
+      else if(firstUnreached){ row.className = "next"; firstUnreached = false; }
+      row.innerHTML =
+        '<td class="lv">極Lv' + target + (target === 100 ? "（極開花）" : "") + '</td>' +
+        '<td>' + fmt(need) + '</td>' +
+        '<td>' + (reached ? "—" : fmt(short)) + '</td>';
+      body.appendChild(row);
+    });
+    mp.hidden = false;
+  }
+
+  (function restore(){
+    var raw = null;
+    try{ raw = localStorage.getItem(STORE); }catch(err){ return; }
+    if(!raw) return;
+    var st;
+    try{ st = JSON.parse(raw); }catch(err){ return; }
+    if(!st || typeof st !== "object") return;
+    if(st.n){
+      var c = chars.filter(function(x){ return x.n === st.n; })[0];
+      if(c){ selected = c; input.value = c.n; }
+    }
+    if(typeof st.e === "number" && isFinite(st.e) && st.e >= 0){
+      expValue = Math.floor(st.e);
+      expInput.value = expValue ? fmt(expValue) : "";
+    }
+    if(/^\d+$/.test(String(st.l))){
+      var lv = parseInt(st.l, 10);
+      if(lv >= 1 && lv <= 99) lvSelect.value = String(lv);
+    }
+    if(st.m === "lv" || st.m === "exp") mode = st.m;
+  })();
+
+  setMode(mode);
+})();
+</script>
+
+</body>
+</html>

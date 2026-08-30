@@ -1,0 +1,16 @@
+{
+  "name": "極レベル早見盤",
+  "short_name": "極早見盤",
+  "description": "刀剣乱舞で、いまの累積経験値のまま修行に出したら極が何レベルで帰ってくるかを刀種別に計算します。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0708",
+  "theme_color": "#0a0708",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

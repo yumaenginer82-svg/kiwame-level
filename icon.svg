@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="極">
+  <rect width="512" height="512" fill="#0a0708"/>
+  <circle cx="256" cy="256" r="207" fill="none" stroke="#d8324b" stroke-width="9"/>
+  <circle cx="256" cy="256" r="189" fill="none" stroke="#7d2131" stroke-width="3"/>
+  <text x="256" y="262" fill="#d8324b" font-size="268" text-anchor="middle" dominant-baseline="central"
+        font-family="'Yu Mincho','YuMincho','Hiragino Mincho ProN','Noto Serif JP',serif">極</text>
+</svg>
