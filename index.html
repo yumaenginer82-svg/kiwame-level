@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0a0708" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#ebe4e4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#f1ede1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1409" media="(prefers-color-scheme: dark)">
 <meta name="description" content="刀剣乱舞で、いまの累積経験値のまま修行に出したら極が何レベルで帰ってくるかを刀種別に計算します。">
 <meta name="apple-mobile-web-app-title" content="極早見盤">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://yumaenginer82-svg.github.io/kiwame-level/icon-512.png">
 <meta name="twitter:card" content="summary">
 <style>
-:root{color-scheme:dark light}
+:root{color-scheme:light dark}
 body{margin:0}
 img{max-width:100%}
 [hidden]{display:none!important}
@@ -31,107 +31,109 @@ img{max-width:100%}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Old+Mincho:wght@400;600;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
 /* ============================================================
-   加州清光 — 黒・白・紅の三色だけで組む。
-   既定は「表地の黒」。表示切替で「裏地の紅」（白地）へ。
+   公式サイト（toukenranbu.jp）の配色体系に合わせる。
+   既定は「和紙」。表示切替で「深緑の漆」（公式の濃色帯に由来）へ。
 
-   黒  = ground / surface / line / habaki      … 地と枠
-   白  = ink / ink-2 / muted / steel / on-accent … 文字と刃
-   紅  = kurenai* / lv-* / saya                 … 差し色
+   生成り〜墨 = ground / surface / line-soft / ink / muted … 地と文字
+   金茶       = gold*                                      … 罫・枠・下線
+   朱         = shu* / saya / chip-fill / lv-*             … 印と答え
 
-   紅を文字に使ってよいのは次の4つだけ。ほかは必ず白系にする。
-     1. 題字の家紋「極」   2. 結果の落款「極」
-     3. 答えの「極 Lv◯◯」  4. 固定バーの同じ答え
-   それ以外で紅が出るのは、罫線・枠の隅・印の縁・鞘・だんだら・地紋といった
-   「文字ではない」要素に限る。注意喚起も色ではなく囲みの形で示す。
+   文字に色を使ってよいのは次だけ。ほかは必ず墨／生成りにする。
+     朱 … 題字の家紋「極」／結果の落款「極」／答えの「極 Lv◯◯」／固定バーの同じ答え
+     金茶 … 使わない（罫・枠・下線・鎺など「文字でない」要素専用）
+   注意喚起も色ではなく囲みの形で示す。
    ============================================================ */
 :root{
-  --ground:#0a0708;
-  --ground-2:#040203;
-  --surface:#150f11;
-  --surface-2:#1e1619;
-  --line:#3b2b2f;
-  --line-soft:#2a1e21;
-  --ink:#f2eceb;
-  --ink-2:#d8c9ca;
-  --muted:#9b898c;
-  --kurenai:#d8324b;
-  --kurenai-dim:#7d2131;
-  --kurenai-text:#f2647a;
-  --kurenai-soft:#2a0f14;
-  --chip-fill:#bf2941;
-  --lv-a:#ff8f9d;
-  --lv-b:#f0576b;
-  --lv-c:#d13a50;
-  --habaki:#2b2226;
-  --on-accent:#fdfbfb;
-  --steel-a:#e9e5e5;
-  --steel-b:#b3aaac;
-  --saya-a:#6e1b2a;
-  --saya-b:#3a0c16;
-  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(216,50,75,0.085)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
-  --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(255,255,255,0.78)' stroke-width='1.3'/%3E%3C/svg%3E");
-  --dandara:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='9' viewBox='0 0 28 9'%3E%3Cpath d='M0 9 L7 0 L14 9 Z M14 9 L21 0 L28 9 Z' fill='rgba(216,50,75,0.85)'/%3E%3C/svg%3E");
-  --shadow:0 2px 0 rgba(0,0,0,.5),0 18px 40px -24px rgba(0,0,0,.9);
-}
-@media (prefers-color-scheme:light){
-  :root:not([data-theme="dark"]){
-    --ground:#ebe4e4;
-    --ground-2:#ded4d5;
-    --surface:#f8f4f3;
-    --surface-2:#efe7e7;
-    --line:#c9b9bb;
-    --line-soft:#dccfd0;
-    --ink:#16100f;
-    --ink-2:#42322f;
-    --muted:#6f5e60;
-    --kurenai:#b41f38;
-    --kurenai-dim:#cf98a2;
-    --kurenai-text:#8e1428;
-    --kurenai-soft:#f7e2e4;
-  --chip-fill:#b41f38;
-    --chip-fill:#b41f38;
-  --lv-a:#8e1428;
-  --lv-b:#b41f38;
-  --lv-c:#c94257;
-  --habaki:#5b4a4d;
-    --lv-a:#8e1428;
-    --lv-b:#b41f38;
-    --lv-c:#c94257;
-    --habaki:#5b4a4d;
-    --on-accent:#fdfafa;
-    --steel-a:#dcd6d6;
-    --steel-b:#a79ea0;
-    --saya-a:#a52639;
-    --saya-b:#6d1424;
-    --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(150,25,45,0.11)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
-    --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(255,255,255,0.9)' stroke-width='1.3'/%3E%3C/svg%3E");
-    --dandara:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='9' viewBox='0 0 28 9'%3E%3Cpath d='M0 9 L7 0 L14 9 Z M14 9 L21 0 L28 9 Z' fill='rgba(180,31,56,0.8)'/%3E%3C/svg%3E");
-    --shadow:0 1px 0 rgba(120,90,95,.22),0 14px 32px -22px rgba(70,30,40,.5);
-  }
-}
-:root[data-theme="light"]{
-  --ground:#ebe4e4;
-  --ground-2:#ded4d5;
-  --surface:#f8f4f3;
-  --surface-2:#efe7e7;
-  --line:#c9b9bb;
-  --line-soft:#dccfd0;
-  --ink:#16100f;
-  --ink-2:#42322f;
-  --muted:#6f5e60;
-  --kurenai:#b41f38;
-  --kurenai-dim:#cf98a2;
-  --kurenai-text:#8e1428;
-  --kurenai-soft:#f7e2e4;
-  --on-accent:#fdfafa;
-  --steel-a:#dcd6d6;
-  --steel-b:#a79ea0;
+  --ground:#f1ede1;
+  --ground-2:#e6dfcd;
+  --surface:#fbf9f3;
+  --surface-2:#f4f0e3;
+  --line:#cfc48f;
+  --line-soft:#e3ddc7;
+  --ink:#1e1a15;
+  --ink-2:#3f382e;
+  --muted:#6d6457;
+  --gold:#8a6a14;
+  --gold-dim:#c3b684;
+  --gold-soft:#f3ebd5;
+  --shu:#b2282c;
+  --shu-text:#8e1c20;
+  --shu-soft:#f7e5e2;
+  --chip-fill:#b2282c;
+  --on-accent:#fdfbf6;
+  --lv-a:#8e1c20;
+  --lv-b:#b2282c;
+  --lv-c:#c9464a;
+  --habaki:linear-gradient(180deg,#e2cb8c,#b1913f);
+  --steel-a:#cfc9c4;
+  --steel-b:#98908c;
   --saya-a:#a52639;
   --saya-b:#6d1424;
-  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(150,25,45,0.11)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
-  --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(255,255,255,0.9)' stroke-width='1.3'/%3E%3C/svg%3E");
-  --dandara:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='9' viewBox='0 0 28 9'%3E%3Cpath d='M0 9 L7 0 L14 9 Z M14 9 L21 0 L28 9 Z' fill='rgba(180,31,56,0.8)'/%3E%3C/svg%3E");
-  --shadow:0 1px 0 rgba(120,90,95,.22),0 14px 32px -22px rgba(70,30,40,.5);
+  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(172,131,0,0.13)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
+  --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(255,255,255,0.95)' stroke-width='1.3'/%3E%3C/svg%3E");
+  --shadow:0 1px 0 rgba(140,120,70,.20),0 14px 32px -22px rgba(70,55,20,.45);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0d1409;
+    --ground-2:#070b05;
+    --surface:#151d10;
+    --surface-2:#1e2818;
+    --line:#3c4632;
+    --line-soft:#27301e;
+    --ink:#f2efe4;
+    --ink-2:#d9d3c2;
+    --muted:#9a9585;
+    --gold:#d9bd6e;
+    --gold-dim:#7a6c3c;
+    --gold-soft:#241f0e;
+    --shu:#d8483f;
+    --shu-text:#f07a6c;
+    --shu-soft:#2a120f;
+    --chip-fill:#b3302a;
+    --on-accent:#fdfbf6;
+    --lv-a:#ff9d8f;
+    --lv-b:#f0776a;
+    --lv-c:#d8483f;
+    --habaki:linear-gradient(180deg,#ab8f47,#665222);
+    --steel-a:#e9e5e0;
+    --steel-b:#b3aca4;
+    --saya-a:#7a2320;
+    --saya-b:#3a0d0b;
+    --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(217,189,110,0.09)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
+    --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(30,26,18,0.55)' stroke-width='1.3'/%3E%3C/svg%3E");
+    --shadow:0 2px 0 rgba(0,0,0,.45),0 18px 40px -24px rgba(0,0,0,.85);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0d1409;
+  --ground-2:#070b05;
+  --surface:#151d10;
+  --surface-2:#1e2818;
+  --line:#3c4632;
+  --line-soft:#27301e;
+  --ink:#f2efe4;
+  --ink-2:#d9d3c2;
+  --muted:#9a9585;
+  --gold:#d9bd6e;
+  --gold-dim:#7a6c3c;
+  --gold-soft:#241f0e;
+  --shu:#d8483f;
+  --shu-text:#f07a6c;
+  --shu-soft:#2a120f;
+  --chip-fill:#b3302a;
+  --on-accent:#fdfbf6;
+  --lv-a:#ff9d8f;
+  --lv-b:#f0776a;
+  --lv-c:#d8483f;
+  --habaki:linear-gradient(180deg,#ab8f47,#665222);
+  --steel-a:#e9e5e0;
+  --steel-b:#b3aca4;
+  --saya-a:#7a2320;
+  --saya-b:#3a0d0b;
+  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='rgba(217,189,110,0.09)' stroke-width='1'%3E%3Ccircle cx='0' cy='24' r='23'/%3E%3Ccircle cx='0' cy='24' r='15'/%3E%3Ccircle cx='0' cy='24' r='7'/%3E%3Ccircle cx='24' cy='24' r='23'/%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Ccircle cx='24' cy='24' r='7'/%3E%3Ccircle cx='48' cy='24' r='23'/%3E%3Ccircle cx='48' cy='24' r='15'/%3E%3Ccircle cx='48' cy='24' r='7'/%3E%3C/g%3E%3C/svg%3E");
+  --hamon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='30' viewBox='0 0 72 30' preserveAspectRatio='none'%3E%3Cpath d='M0 21 C 9 8, 18 26, 27 17 S 45 5, 54 19 S 66 27, 72 17' fill='none' stroke='rgba(30,26,18,0.55)' stroke-width='1.3'/%3E%3C/svg%3E");
+  --shadow:0 2px 0 rgba(0,0,0,.45),0 18px 40px -24px rgba(0,0,0,.85);
 }
 
 *{box-sizing:border-box}
@@ -147,43 +149,44 @@ body{
 /* ---------- 黒地に紅の裏地 ---------- */
 .panel{position:relative;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
   padding:clamp(15px,2.6vw,26px)}
-.panel::before{content:"";position:absolute;inset:4px;border:1px solid var(--kurenai-dim);opacity:.42;pointer-events:none}
+.panel::before{content:"";position:absolute;inset:4px;border:1px solid var(--gold-dim);opacity:.6;pointer-events:none}
 .framed::after{
   content:"";position:absolute;inset:-1px;pointer-events:none;
   background:
-    linear-gradient(var(--kurenai),var(--kurenai)) left 0 top 0/13px 2px no-repeat,
-    linear-gradient(var(--kurenai),var(--kurenai)) left 0 top 0/2px 13px no-repeat,
-    linear-gradient(var(--kurenai),var(--kurenai)) right 0 top 0/13px 2px no-repeat,
-    linear-gradient(var(--kurenai),var(--kurenai)) right 0 top 0/2px 13px no-repeat,
-    linear-gradient(var(--kurenai),var(--kurenai)) left 0 bottom 0/13px 2px no-repeat,
-    linear-gradient(var(--kurenai),var(--kurenai)) left 0 bottom 0/2px 13px no-repeat,
-    linear-gradient(var(--kurenai),var(--kurenai)) right 0 bottom 0/13px 2px no-repeat,
-    linear-gradient(var(--kurenai),var(--kurenai)) right 0 bottom 0/2px 13px no-repeat;
+    linear-gradient(var(--gold),var(--gold)) left 0 top 0/13px 2px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) left 0 top 0/2px 13px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) right 0 top 0/13px 2px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) right 0 top 0/2px 13px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) left 0 bottom 0/13px 2px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) left 0 bottom 0/2px 13px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) right 0 bottom 0/13px 2px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) right 0 bottom 0/2px 13px no-repeat;
 }
 
 /* ---------- 題字 ---------- */
 .masthead{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
   background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
   padding:clamp(14px,2.4vw,22px) clamp(14px,2.6vw,26px) calc(clamp(14px,2.4vw,22px) + 12px)}
-.masthead::before{content:"";position:absolute;inset:4px;border:1px solid var(--kurenai-dim);opacity:.42;pointer-events:none}
-.dandara{position:absolute;left:5px;right:5px;bottom:5px;height:9px;
-  background:var(--dandara) repeat-x;background-size:28px 9px;pointer-events:none}
+.masthead::before{content:"";position:absolute;inset:4px;border:1px solid var(--gold-dim);opacity:.6;pointer-events:none}
+.hairline{position:absolute;left:6px;right:6px;bottom:7px;height:4px;pointer-events:none;
+  background:linear-gradient(var(--gold-dim),var(--gold-dim)) 0 0/100% 1px no-repeat,
+             linear-gradient(var(--gold),var(--gold)) 0 100%/100% 1px no-repeat}
 .brand{display:flex;align-items:center;gap:14px;position:relative;min-width:0}
 .mon{
   width:50px;height:50px;flex:none;display:grid;place-items:center;position:relative;
-  color:var(--kurenai);font-family:"Yuji Syuku",serif;font-size:26px;line-height:1;
-  border:1px solid var(--kurenai);border-radius:50%;
+  color:var(--shu);font-family:"Yuji Syuku",serif;font-size:26px;line-height:1;
+  border:1px solid var(--shu);border-radius:50%;
 }
-.mon::after{content:"";position:absolute;inset:4px;border:1px solid var(--kurenai-dim);border-radius:50%}
+.mon::after{content:"";position:absolute;inset:4px;border:1px solid var(--gold-dim);border-radius:50%}
 h1{font-family:"Yuji Syuku","Yu Mincho",serif;font-weight:400;font-size:clamp(1.4rem,6vw,2.15rem);
   margin:0;letter-spacing:.14em;line-height:1.2;color:var(--ink);text-wrap:balance}
 .tagline{margin:4px 0 0;color:var(--muted);font-size:.75rem;letter-spacing:.04em;
   font-family:"Zen Old Mincho",serif;line-height:1.6}
 .theme-btn{
-  position:relative;border:1px solid var(--kurenai-dim);background:var(--surface-2);color:var(--ink-2);
+  position:relative;border:1px solid var(--gold-dim);background:var(--surface-2);color:var(--ink-2);
   font-family:"Zen Old Mincho",serif;font-size:.8125rem;padding:9px 15px;min-height:40px;cursor:pointer;letter-spacing:.12em;
 }
-.theme-btn:hover{border-color:var(--kurenai);background:var(--ground-2)}
+.theme-btn:hover{border-color:var(--gold);background:var(--ground-2)}
 
 /* ---------- 配置 ---------- */
 .cols{display:grid;grid-template-columns:minmax(0,352px) minmax(0,1fr);gap:clamp(13px,2.4vw,26px);
@@ -194,7 +197,7 @@ h1{font-family:"Yuji Syuku","Yu Mincho",serif;font-weight:400;font-size:clamp(1.
 .eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 15px}
 .eyebrow .num{
   width:26px;height:26px;flex:none;display:grid;place-items:center;
-  border:1px solid var(--kurenai);color:var(--ink);
+  border:1px solid var(--gold);color:var(--ink);
   font-family:"Yuji Syuku",serif;font-size:14px;line-height:1;padding-bottom:1px;
 }
 .eyebrow .ttl{font-family:"Zen Old Mincho",serif;font-size:.9375rem;letter-spacing:.24em;color:var(--ink-2)}
@@ -212,7 +215,7 @@ input[type=text],select{
   background:var(--surface-2);color:var(--ink);
   border:1px solid var(--line);border-radius:0;
 }
-input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--kurenai);outline-offset:1px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--shu);outline-offset:1px}
 input::placeholder{color:var(--muted);opacity:.7}
 
 .combo{position:relative}
@@ -221,7 +224,7 @@ input::placeholder{color:var(--muted);opacity:.7}
 .combo-list{
   position:absolute;z-index:30;top:calc(100% + 5px);left:0;right:0;max-height:min(58vh,320px);overflow-y:auto;
   -webkit-overflow-scrolling:touch;
-  background:var(--surface);border:1px solid var(--kurenai-dim);box-shadow:var(--shadow);
+  background:var(--surface);border:1px solid var(--gold-dim);box-shadow:var(--shadow);
   list-style:none;margin:0;padding:4px 0;
 }
 .combo-list .grp{
@@ -230,8 +233,8 @@ input::placeholder{color:var(--muted);opacity:.7}
 }
 .combo-list .grp:first-child{border-top:0;margin-top:0;padding-top:6px}
 .combo-list li.opt{padding:9px 13px;cursor:pointer;display:flex;align-items:baseline;gap:8px;font-size:.9375rem}
-.combo-list li.opt[aria-selected=true]{color:var(--ink);font-weight:700;box-shadow:inset 3px 0 0 var(--kurenai)}
-.combo-list li.opt.active,.combo-list li.opt:hover{background:var(--kurenai-soft);color:var(--ink)}
+.combo-list li.opt[aria-selected=true]{color:var(--ink);font-weight:700;box-shadow:inset 3px 0 0 var(--gold)}
+.combo-list li.opt.active,.combo-list li.opt:hover{background:var(--gold-soft);color:var(--ink)}
 .combo-list li.opt .rr{margin-left:auto;font-size:.6875rem;color:var(--muted);letter-spacing:.06em;font-family:"Zen Old Mincho",serif;white-space:nowrap}
 .combo-list li.opt.active .rr,.combo-list li.opt:hover .rr{color:var(--ink-2)}
 .combo-empty{padding:15px 13px;color:var(--muted);font-size:.8125rem}
@@ -242,14 +245,14 @@ input::placeholder{color:var(--muted);opacity:.7}
   background:var(--surface-2);color:var(--muted);border:0;border-right:1px solid var(--line);
 }
 .seg button:last-child{border-right:0}
-.seg button[aria-pressed=true]{background:var(--ground-2);color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--kurenai)}
+.seg button[aria-pressed=true]{background:var(--ground-2);color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--gold)}
 
 .quick{display:flex;flex-wrap:wrap;gap:6px}
 .quick button{
   font-family:"Zen Old Mincho",serif;font-size:.75rem;letter-spacing:.06em;padding:8px 11px;min-height:38px;cursor:pointer;
   background:transparent;color:var(--muted);border:1px solid var(--line);
 }
-.quick button:hover{border-color:var(--kurenai);color:var(--ink)}
+.quick button:hover{border-color:var(--gold);color:var(--ink)}
 
 .exp-input{font-family:"Zen Old Mincho",serif;font-size:1.35rem;font-variant-numeric:tabular-nums;letter-spacing:.04em;color:var(--ink)}
 
@@ -258,10 +261,10 @@ input::placeholder{color:var(--muted);opacity:.7}
 .rakkan{
   position:absolute;z-index:2;top:20px;right:20px;width:74px;height:74px;
   display:grid;place-items:center;transform:rotate(-5deg);
-  border:3px solid var(--kurenai);color:var(--kurenai);
+  border:3px solid var(--shu);color:var(--shu);
   font-family:"Yuji Syuku",serif;font-size:41px;line-height:1;padding-bottom:5px;
 }
-.rakkan::after{content:"";position:absolute;inset:3px;border:1px solid var(--kurenai);opacity:.5}
+.rakkan::after{content:"";position:absolute;inset:3px;border:1px solid var(--shu);opacity:.5}
 @media (max-width:520px){.rakkan{width:54px;height:54px;font-size:30px;top:14px;right:14px;border-width:2px}}
 .result-body{position:relative;z-index:1}
 .has-seal .subject,.has-seal .lv-line{padding-right:94px}
@@ -276,7 +279,7 @@ input::placeholder{color:var(--muted);opacity:.7}
 .chip.warn{color:var(--muted);border-color:var(--muted);border-style:dashed;background:transparent}
 
 .lv-line{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:14px 0 2px}
-.lv-word{font-family:"Yuji Syuku",serif;font-size:1.5rem;color:var(--kurenai-text);letter-spacing:.2em}
+.lv-word{font-family:"Yuji Syuku",serif;font-size:1.5rem;color:var(--shu-text);letter-spacing:.2em}
 .lv-num{
   font-family:"Zen Old Mincho",serif;font-weight:900;
   font-size:clamp(3.6rem,15vw,6rem);line-height:.88;font-variant-numeric:tabular-nums;
@@ -287,12 +290,12 @@ input::placeholder{color:var(--muted);opacity:.7}
 .lv-delta{font-size:.8125rem;color:var(--muted);font-family:"Zen Old Mincho",serif}
 .lv-delta b{color:var(--ink-2);font-weight:600;font-variant-numeric:tabular-nums}
 
-/* 抜刀メーター：紅の鞘から白銀の刃が出る */
+/* 抜刀メーター：朱の鞘から白銀の刃が出る */
 .blade{margin:22px 0 4px}
 .blade-row{display:flex;align-items:stretch;height:30px}
 .habaki{width:clamp(30px,9%,50px);flex:none;background:var(--habaki);
-  border:1px solid var(--kurenai-dim);border-right:0;position:relative}
-.habaki::after{content:"";position:absolute;inset:5px 4px;border-left:1px solid var(--kurenai);border-right:1px solid var(--kurenai);opacity:.55}
+  border:1px solid var(--gold-dim);border-right:0;position:relative}
+.habaki::after{content:"";position:absolute;inset:5px 4px;border-left:1px solid var(--gold);border-right:1px solid var(--gold);opacity:.55}
 .blade-track{
   flex:1;min-width:0;position:relative;
   background:linear-gradient(180deg,var(--saya-a),var(--saya-b) 60%,var(--saya-a));
@@ -318,10 +321,10 @@ input::placeholder{color:var(--muted);opacity:.7}
 .calc .v{font-family:"Zen Old Mincho",serif;font-size:1.125rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
 .calc .v.minus{color:var(--muted)}
 .calc li.carry{background:var(--ground-2);margin:0 -12px;padding-left:12px;padding-right:12px;
-  border-bottom-color:transparent;border-left:2px solid var(--kurenai)}
+  border-bottom-color:transparent;border-left:2px solid var(--gold)}
 .calc li.carry .v{color:var(--ink);font-weight:700}
 
-.notice{display:flex;gap:10px;align-items:flex-start;border-left:3px solid var(--kurenai);background:var(--kurenai-soft);
+.notice{display:flex;gap:10px;align-items:flex-start;border-left:3px solid var(--shu);background:var(--shu-soft);
   padding:12px 14px;margin-top:16px;font-size:.8125rem;color:var(--ink-2)}
 .notice.info{border-left-color:var(--line);background:var(--surface-2)}
 .notice b{color:var(--ink);font-weight:700}
@@ -339,7 +342,7 @@ td.lv{font-family:"Zen Old Mincho",serif;font-size:1rem;color:var(--ink)}
 tr.reached td{color:var(--muted)}
 tr.reached td.lv{color:var(--muted)}
 tr.reached td.lv::after{content:"　到達済";font-family:"Zen Kaku Gothic New",sans-serif;font-size:.625rem;letter-spacing:.06em}
-tr.next{background:var(--ground-2);box-shadow:inset 3px 0 0 var(--kurenai)}
+tr.next{background:var(--ground-2);box-shadow:inset 3px 0 0 var(--gold)}
 tr.next td{color:var(--ink)}
 tr.next td.lv{font-weight:900;color:var(--ink)}
 .th-long{display:inline}
@@ -347,23 +350,23 @@ tr.next td.lv{font-weight:900;color:var(--ink)}
 
 /* しくみ */
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:16px;margin:0;list-style:none;padding:0}
-.steps li{border-top:1px solid var(--kurenai-dim);padding-top:12px}
+.steps li{border-top:1px solid var(--gold-dim);padding-top:12px}
 .steps .st{font-family:"Yuji Syuku",serif;color:var(--ink);font-size:1rem;letter-spacing:.2em;display:block;margin-bottom:5px}
 .steps p{margin:0;font-size:.8125rem;color:var(--muted);line-height:1.75}
 
 footer{margin-top:28px;padding-top:18px;border-top:1px solid var(--line);font-size:.75rem;color:var(--muted);line-height:1.9}
-footer a{color:var(--ink-2);text-decoration-color:var(--kurenai);text-underline-offset:3px}
+footer a{color:var(--ink-2);text-decoration-color:var(--gold);text-underline-offset:3px}
 footer ul{margin:6px 0 0;padding-left:1.15em}
 footer li{margin-bottom:2px}
 
 /* 答えが画面外のときだけ出る固定バー（携帯） */
 .peek{position:fixed;left:0;right:0;bottom:0;z-index:40;
   display:none;align-items:center;justify-content:space-between;gap:12px;
-  padding:9px 14px;background:var(--ground-2);border-top:2px solid var(--kurenai)}
+  padding:9px 14px;background:var(--ground-2);border-top:2px solid var(--shu)}
 .peek .nm{font-family:"Zen Old Mincho",serif;font-size:.9375rem;color:var(--ink-2);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .peek .lv{font-family:"Zen Old Mincho",serif;font-weight:900;font-size:1.5rem;line-height:1.1;
-  color:var(--kurenai-text);font-variant-numeric:tabular-nums;white-space:nowrap}
+  color:var(--shu-text);font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* ---------- 携帯 ---------- */
 @media (max-width:560px){
@@ -412,7 +415,7 @@ footer li{margin-bottom:2px}
       </div>
     </div>
     <button class="theme-btn" id="themeBtn" type="button">表示切替</button>
-    <div class="dandara" aria-hidden="true"></div>
+    <div class="hairline" aria-hidden="true"></div>
   </header>
 
   <div class="cols">
