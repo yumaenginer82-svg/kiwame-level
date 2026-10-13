@@ -28,7 +28,7 @@
 
 ## データ出典
 
-経験値テーブルと刀剣男士データは以下から取得しました（2026年8月30日時点）。
+経験値テーブルと刀剣男士データは以下から取得しました（2026年10月13日時点）。
 
 - [刀剣乱舞ONLINE（とうらぶ）Wiki* — 経験値](https://wikiwiki.jp/toulove/%E7%B5%8C%E9%A8%93%E5%80%A4)
 - [刀剣乱舞ONLINE（とうらぶ）Wiki* — 刀剣男士一覧](https://wikiwiki.jp/toulove/%E5%88%80%E5%89%A3%E7%94%B7%E5%A3%AB%E4%B8%80%E8%A6%A7) ／ [刀剣男士 極](https://wikiwiki.jp/toulove/%E5%88%80%E5%89%A3%E7%94%B7%E5%A3%AB%20%E6%A5%B5)
